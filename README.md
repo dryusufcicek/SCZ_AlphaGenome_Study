@@ -118,8 +118,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 - **Author**: Yusuf Cicek
-- **Email**: [your.email@institution.edu]
-- **Institution**: [Your Institution]
+- **Email**: yusuf.cicek@iuc.edu.tr
+- **Institution**: Istanbul University - Cerrahpasa, Cerrahpasa Faculty of Medicine, Department of Psychiatry
 
 ## Acknowledgments
 
