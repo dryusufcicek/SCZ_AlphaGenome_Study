@@ -11,16 +11,16 @@ This repository contains the analysis code for:
 
 > **Deep Learning-Based Regulatory Effect Prediction of Common Schizophrenia Risk Variants**
 > 
-> We apply AlphaGenome to score 257 lead SNPs from the PGC3 schizophrenia GWAS, identifying significant enrichment of intracellular calcium signaling (ATP2A2, ITPR3) and a loss-of-function bias (66% of variants decrease target gene expression).
+> We apply AlphaGenome to score 257 lead SNPs from the PGC3 schizophrenia GWAS, identifying significant enrichment of intracellular calcium signaling (ATP2A2, ITPR3) and validating predictions against chromatin interaction maps.
 
 ## Key Findings
 
 | Finding | Value | Significance |
 |---------|-------|--------------|
 | Pathway Enrichment | Calcium_Internal | FDR = 0.027 |
-| Directional Bias | 66% Loss-of-Function | P = 0.032 |
 | PGC3 Gene Overlap | 29/120 (24.2%) | P = 9.8×10⁻¹¹ |
-| Hi-C Loop Overlap | 57.6% of SNPs | ~5.8× enriched |
+| H-MAGMA Validation | 22% recall | 28 SNP-gene pairs |
+| Somatic Depletion | 42/44 cell types | OR = 0.22-0.47 |
 
 ## Repository Structure
 
@@ -33,7 +33,6 @@ SCZ_AlphaGenome_Study/
 │   ├── 01_extract_gwas_variants.py   # GWAS data extraction
 │   ├── 02_alphagenome_scoring.py     # AlphaGenome API scoring
 │   ├── 03_pathway_enrichment.py      # Ranked GSEA analysis
-│   ├── 04_directionality_analysis.py # LoF vs GoF testing
 │   ├── 05_hmagma_validation.py       # H-MAGMA validation
 │   ├── 06_celltype_validation.py     # Cell-type specificity
 │   ├── 07_hic_loop_overlap.py        # Hi-C loop analysis
@@ -96,7 +95,6 @@ python scripts/06_celltype_validation.py
 | PGC3 SCZ GWAS | [PGC Data Portal](https://pgc.unc.edu) | Trubetskoy et al., 2022 |
 | H-MAGMA Annotations | [H-MAGMA GitHub](https://github.com/thewonlab/H-MAGMA) | Sey et al., 2020 |
 | GTEx snRNA-seq | [GTEx Portal](https://gtexportal.org) | GTEx Consortium |
-| BrainSpan | [BrainSpan Atlas](https://www.brainspan.org) | Miller et al., 2014 |
 
 ## Citation
 
