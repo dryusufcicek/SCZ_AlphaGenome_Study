@@ -1,0 +1,9 @@
+Analysis,N_Items,Key_Finding,Status
+AlphaGenome Variant Scoring,257,138 variants with brain specificity > 0.2,Complete
+Developmental Enrichment,3,Peak enrichment in None period,Complete
+Pathway GSEA,3,Calcium signaling top enriched pathway,Complete
+Effect Directionality,3841,"UP: 3841, DOWN: 0 (possible LoF bias)",Complete
+Cell Type Enrichment,8,Neuronal > Glial enrichment,Complete
+Multimodal Convergence,14,1 variants with high convergence,Complete
+ISM TF Analysis,112,2 variants with TF binding effects,Complete
+ATP2A2 Closed-Loop,1,Validated risk variant → gene → developmental timing,Complete

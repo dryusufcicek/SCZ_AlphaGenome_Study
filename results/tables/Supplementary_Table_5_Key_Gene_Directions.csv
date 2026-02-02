@@ -1,0 +1,11 @@
+gene,n_variants,n_up,n_down,mean_score,direction,interpretation
+CACNA1C,1,1,0,1.637,UP,Risk → ↑ expression
+CACNA1D,2,2,0,0.1825,UP,Risk → ↑ expression
+ATP2A2,1,1,0,13.462,UP,Risk → ↑ expression
+GRIN2A,1,1,0,0.797,UP,Risk → ↑ expression
+GRIA1,1,1,0,2.113,UP,Risk → ↑ expression
+DRD2,1,1,0,0.972,UP,Risk → ↑ expression
+GABBR1,2,2,0,7.4425,UP,Risk → ↑ expression
+GRM3,1,1,0,0.377,UP,Risk → ↑ expression
+ITPR3,2,2,0,5.4465,UP,Risk → ↑ expression
+KCNQ5,1,1,0,0.325,UP,Risk → ↑ expression
