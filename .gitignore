@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Data files (too large for git)
+data/raw/*.gz
+data/raw/*.tsv
+data/raw/*.vcf
+data/validation/*.h5ad
+data/validation/*.bedpe
+*.rda
+
+# Credentials
+config_local.py
+.env
+*.key
+
+# Logs and temp files
+*.log
+*.tmp
+.ipynb_checkpoints/
+
+# Large result files
+results/*.csv
+!results/example_*.csv
