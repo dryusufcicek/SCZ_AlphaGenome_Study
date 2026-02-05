@@ -6,99 +6,111 @@ from pathlib import Path
 import sys
 from tqdm import tqdm
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
-from config import PROCESSED_DIR, RESULTS_DIR
+sys.path.append(str(Path(__file__).parent.parent))
+from config import PROCESSED_DIR, RESULTS_DIR, GENE_DIR
 
-# Import GSEA logic from existing script
+# Import GSEA logic from the new location
 import importlib.util
-spec = importlib.util.spec_from_file_location("gsea_module", Path(__file__).parent.parent.parent / "34_revision2_gsea_pathways_universe.py")
+gsea_script = Path(__file__).parent.parent / "06_enrichment" / "run_gsea.py"
+spec = importlib.util.spec_from_file_location("gsea_module", gsea_script)
 gsea_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(gsea_module)
 
-def run_sensitivity_analysis():
-    print("=" * 60)
-    print("SENSITIVITY ANALYSIS: Robustness to Outlier Removal")
+def run_sensitivity_analysis(exclude_top_1pct=True, exclude_mhc=False):
+    title = "SENSITIVITY ANALYSIS"
+    if exclude_top_1pct: title += ": Outlier Removal (Top 1%)"
+    if exclude_mhc: title += " + MHC Exclusion (Chr6:25-34Mb)"
+    
+    print("\n" + "=" * 60)
+    print(title)
     print("=" * 60)
     
     # 1. Load Z-Scores
-    z_score_file = PROCESSED_DIR / "gene_z_scores.csv"
+    z_score_file = GENE_DIR / "gene_z_scores.csv"
     if not z_score_file.exists():
+        print(f"Error: {z_score_file} not found.")
         return
         
     df = pd.read_csv(z_score_file)
+
     
-    # 2. Identify and Drop Top 1%
-    threshold = df['z_score'].quantile(0.99)
-    top_genes = df[df['z_score'] > threshold]['gene'].tolist()
+    # 2. Filter Genes
+    filtered_df = df.copy()
     
-    # Remove outliers from the HIT list
-    df_hits_filtered = df[df['z_score'] <= threshold].copy()
-    
-    # 3. Construct the Full Universe (Hits + Zeros)
-    # The original analysis used ~47,800 genes.
-    # We will assume any gene in the GMT but NOT in our hits is a "Zero".
-    
-    # Load GMT
+    if exclude_top_1pct:
+        threshold = df['z_score'].quantile(0.99)
+        filtered_df = filtered_df[filtered_df['z_score'] <= threshold]
+        print(f"Dropped Top 1% genes (Z > {threshold:.2f})")
+        
+    if exclude_mhc:
+        # We need chromosome info. Re-map if needed or use gene names
+        # Standard MHC genes often start with HLA-, HIST*, etc.
+        # But for rigor, we should use genomic coordinates if possible.
+        # Since we don't have CHR in gene_z_scores.csv, we rely on a mapping file.
+        mapping_file = PROCESSED_DIR / "variant_gene_mapping.csv"
+        if mapping_file.exists():
+            mapping = pd.read_csv(mapping_file)
+            mhc_genes = mapping[mapping['CHR'].isin(['6', 'chr6']) & (mapping['BP'] >= 25000000) & (mapping['BP'] <= 34000000)]['gene'].unique()
+            filtered_df = filtered_df[~filtered_df['gene'].isin(mhc_genes)]
+            print(f"Excluded {len(mhc_genes)} genes from MHC region.")
+        else:
+            # Fallback simple string match for Histones in MHC
+            mhc_pattern = "^HLA-|^H1|^H2|^H3|^H4"
+            mhc_genes = filtered_df[filtered_df['gene'].str.contains(mhc_pattern)]['gene'].unique()
+            filtered_df = filtered_df[~filtered_df['gene'].isin(mhc_genes)]
+            print(f"Excluded {len(mhc_genes)} genes (Histone/HLA proxy) due to missing mapping file.")
+
+    # 3. Construct the Full Universe
     gmt_file = PROCESSED_DIR / "GO_Biological_Process_2023.gmt"
-    # Ensure it exists
     if not gmt_file.exists():
          gsea_module.download_gmt_if_needed()
          
     pathways = gsea_module.load_gmt(gmt_file)
     
-    # Collect all unique genes in the GMT universe (Background)
     all_pathway_genes = set()
     for gs in pathways.values():
         all_pathway_genes.update(gs)
     
-    # Map Hit Scores
-    gene_scores = dict(zip(df_hits_filtered['gene'], df_hits_filtered['z_score']))
-    
-    # Build Full Rank List
-    # Any gene in the GMT that isn't a hit gets 0.0
-    # Any gene in our filtered hits keeps its score
-    full_universe_scores = []
-    
-    # We consider the universe to be (GMT Genes UNION Hit Genes)
+    gene_scores = dict(zip(filtered_df['gene'], filtered_df['z_score']))
     full_universe_set = all_pathway_genes.union(set(gene_scores.keys()))
     
+    full_universe_scores = []
     for gene in full_universe_set:
         full_universe_scores.append({
             'gene': gene,
-            'z_score': gene_scores.get(gene, 0.0) # 0.0 if not in hits
+            'z_score': gene_scores.get(gene, 0.0)
         })
         
-    # Convert to DataFrame for Ranking
     rank_df = pd.DataFrame(full_universe_scores)
-    
-    # Assign Ranks (Higher Z = Better Rank = Lower Number)
-    # MannWhitneyU in the GSEA script tested 'less', meaning lower rank is better.
-    # So we sort descending by score.
     rank_df = rank_df.sort_values('z_score', ascending=False).reset_index(drop=True)
     rank_df['rank'] = rank_df.index + 1
     
-    print(f"Full Universe Size: {len(rank_df)}")
-    print(f"Non-Zero Hits Remaining: {len(df_hits_filtered)}")
-    
     # 4. Re-Run GSEA
-    print("\nRunning GSEA on Filtered Data...")
     results = []
-    
-    for name, genes in tqdm(pathways.items()):
-        # Call the imported function
+    for name, genes in tqdm(pathways.items(), desc="Running GSEA"):
         p, r, med, n = gsea_module.gsea_mannwhitney(rank_df, genes)
-        
         if p is not None:
              results.append((name, p))
              
     results.sort(key=lambda x: x[1])
     
-    # 5. Report
-    print("\n" + "=" * 60)
-    print("RESULTS: Top Pathways (Top 1% Removed)")
-    print("=" * 60)
-    for i, (name, p) in enumerate(results[:20]):
+    # 5. Save and Report
+    suffix = "_no_top1pct" if exclude_top_1pct else ""
+    if exclude_mhc: suffix += "_no_mhc"
+    
+    out_file = RESULTS_DIR / f"sensitivity_results{suffix}.csv"
+    pd.DataFrame(results, columns=['Pathway', 'P-value']).to_csv(out_file, index=False)
+    
+    print(f"\nRESULTS: Top Pathways {suffix.replace('_', ' ')}")
+    for i, (name, p) in enumerate(results[:15]):
         print(f"{i+1}. {name[:50]} (P = {p:.2e})")
 
+def main():
+    # Run the core PI-requested sensitivity tests
+    run_sensitivity_analysis(exclude_top_1pct=True, exclude_mhc=False)
+    run_sensitivity_analysis(exclude_top_1pct=False, exclude_mhc=True)
+    run_sensitivity_analysis(exclude_top_1pct=True, exclude_mhc=True)
+
 if __name__ == "__main__":
-    run_sensitivity_analysis()
+    main()
+

@@ -11,15 +11,21 @@ load_dotenv()
 # Project paths
 PROJECT_ROOT = Path(__file__).parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
-GWAS_DIR = DATA_DIR / "gwas"
-BRAINSPAN_DIR = DATA_DIR / "brainspan"
+RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"
 RESULTS_DIR = PROJECT_ROOT / "results"
 FIGURES_DIR = RESULTS_DIR / "figures"
 
+# Canonical subdirectories for processed data
+CS_DIR = PROCESSED_DIR / "credible_sets"
+AG_DIR = PROCESSED_DIR / "alphagenome_scores"
+GENE_DIR = PROCESSED_DIR / "gene_scores"
+CT_DIR = PROCESSED_DIR / "celltype_enrichment"
+
 # Ensure directories exist
-for dir_path in [PROCESSED_DIR, RESULTS_DIR]:
+for dir_path in [PROCESSED_DIR, RESULTS_DIR, CS_DIR, AG_DIR, GENE_DIR, CT_DIR]:
     dir_path.mkdir(parents=True, exist_ok=True)
+
 
 # API Keys
 ALPHAGENOME_API_KEY = os.getenv("ALPHAGENOME_API_KEY")
