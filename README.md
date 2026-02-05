@@ -1,4 +1,4 @@
-# Deep Learning Reveals the Regulatory Architecture of Schizophrenia Risk
+# AlphaGenome Reveals the Regulatory Architecture of Schizophrenia Risk
 
 **Authors:** Yusuf Cicek, et al.
 **Repository:** AlphaGenome SCZ Analysis
