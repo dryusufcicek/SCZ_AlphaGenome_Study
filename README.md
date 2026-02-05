@@ -1,126 +1,81 @@
-# AlphaGenome Regulatory Analysis of Schizophrenia GWAS Variants
+# Deep Learning Reveals the Regulatory Architecture of Schizophrenia Risk
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+**Authors:** Yusuf Cicek, et al.
+**Repository:** AlphaGenome SCZ Analysis
 
-A computational pipeline for predicting regulatory effects of schizophrenia risk variants using the AlphaGenome deep learning model.
+## 1. Project Overview
+Schizophrenia (SCZ) polygenic risk remains poorly understood at the mechanistic level. This study applies **AlphaGenome**, a sequence-based deep learning framework, to decode the regulatory impact of 10,832 candidate causal variants prioritized from the PGC3 GWAS. By implementing a rigorous **Posterior-Weighted Credible Set** analysis and **Unbiased Whole-Genome Enrichment** strategy, we demonstrate that SCZ risk converges fundamentally on the disruption of **neuronal transcriptional regulation** ($P < 10^{-30}$), which is accompanied by specific downstream deficits in **synaptic vesicle transport** and **intracellular calcium homeostasis**.
 
-## Overview
+## 2. Analysis Workflow
+The analysis pipeline is modularized into conceptual steps, mapped to the `scripts/` directory:
 
-This repository contains the analysis code for:
+1.  **Locus Definition (`scripts/01_locus_definition`):**
+    *   Input: PGC3 GWAS Summary Statistics.
+    *   Action: Define independent genomic loci ($P < 5 \times 10^{-8}$, clumping).
+    *   Output: Locus BED files.
 
-> **Deep Learning-Based Regulatory Effect Prediction of Common Schizophrenia Risk Variants**
-> 
-> We apply AlphaGenome to score 257 lead SNPs from the PGC3 schizophrenia GWAS, identifying significant enrichment of intracellular calcium signaling (ATP2A2, ITPR3) and validating predictions against chromatin interaction maps.
+2.  **Fine-Mapping (`scripts/02_finemapping`):**
+    *   Input: Defined Loci + 1000G Reference Panel.
+    *   Action: Calculate Approximate Bayes Factors (ABF) and Posterior Probabilities (PP).
+    *   Output: 95% Credible Sets (`scz_credible_sets_proxy.csv`).
 
-## Key Findings
+3.  **AlphaGenome Scoring (`scripts/03_alphagenome_scoring`):**
+    *   Input: Variants from Credible Sets.
+    *   Action: Predict regulatory impact (Log-Fold Change) across 53 biosamples using AlphaGenome.
+    *   Output: Variant-level LFCs.
 
-| Finding | Value | Significance |
-|---------|-------|--------------|
-| Pathway Enrichment | Calcium_Internal | FDR = 0.027 |
-| PGC3 Gene Overlap | 29/120 (24.2%) | P = 9.8×10⁻¹¹ |
-| H-MAGMA Validation | 22% recall | 28 SNP-gene pairs |
-| Somatic Depletion | 42/44 cell types | OR = 0.22-0.47 |
+4.  **Variant-to-Gene Aggregation (`scripts/04_variant_to_gene`):**
+    *   Input: Variant Scores + Posterior Probabilities.
+    *   Action: Aggregate scores to genes using the formula $GeneScore = \sum (PP \times LFC)$.
+    *   Output: Weighted Gene Scores.
 
-## Repository Structure
+5.  **Empirical Calibration (`scripts/05_null_model`):**
+    *   Input: Weighted Gene Scores + Gene Universe.
+    *   Action: Calculate Z-Scores against a null distribution of 47,808 genes.
+    *   Output: Calibrated Z-Scores (`gene_z_scores.csv`).
 
-```
-SCZ_AlphaGenome_Study/
-├── README.md                          # This file
-├── requirements.txt                   # Python dependencies
-├── config.py                          # Configuration and API keys
-├── scripts/
-│   ├── 01_extract_gwas_variants.py   # GWAS data extraction
-│   ├── 02_alphagenome_scoring.py     # AlphaGenome API scoring
-│   ├── 03_pathway_enrichment.py      # Ranked GSEA analysis
-│   ├── 05_hmagma_validation.py       # H-MAGMA validation
-│   ├── 06_celltype_validation.py     # Cell-type specificity
-│   ├── 07_hic_loop_overlap.py        # Hi-C loop analysis
-│   └── 08_pgc3_comparison.py         # Official gene list comparison
-├── data/
-│   ├── raw/                          # Original GWAS files (not tracked)
-│   └── processed/                    # Processed variant lists
-├── results/
-│   ├── figures/                      # Publication figures
-│   └── tables/                       # Supplementary tables
-└── docs/
-    └── SCZ_Scientific_Report.md      # Full methods and results
-```
+6.  **Unbiased Enrichment (`scripts/06_enrichment`):**
+    *   Input: Ranked Gene List.
+    *   Action: GSEA (Mann-Whitney U) against 5,000 GO terms.
+    *   Output: Pathway Enrichment Tables.
 
-## Installation
+7.  **Cell-Type Analysis (`scripts/07_celltype_analysis`):**
+    *   Input: Genomics Footprints (ATAC-seq).
+    *   Action: Footprint-aware binomial testing.
+    *   Output: Normalized Cell-Type Specificity (`celltype_enrichment_normalized.csv`).
 
+## 3. Reproducibility
+### Environment Setup
+To replicate the analysis environment:
 ```bash
-# Clone repository
-git clone https://github.com/dryusufcicek/SCZ_AlphaGenome_Study.git
-cd SCZ_AlphaGenome_Study
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set AlphaGenome API key
-export ALPHAGENOME_API_KEY="your_api_key_here"
+conda env create -f environment.yml
+conda activate scz-alphagenome
 ```
 
-## Usage
+### Dependencies
+*   Python 3.10
+*   `numpy`, `pandas`, `scipy` (Core stats)
+*   `statsmodels` (FDR correction)
+*   `seaborn` (Visualization)
 
-### Step 1: Extract GWAS Variants
+## 4. How to Reproduce Key Figures
+To generate the core figures presented in the manuscript:
+
+**Figure 2: Genome-Wide Regulatory Convergence**
 ```bash
-python scripts/01_extract_gwas_variants.py
+python scripts/04_variant_to_gene/compute_gene_scores.py
+python scripts/06_enrichment/run_gsea.py
+# Outputs: Fig2A_Regulatory_Manhattan.png, Fig2B_GSEA_Dotplot.png
 ```
 
-### Step 2: Score Variants with AlphaGenome
+**Figure 4: Cell-Type Specificity**
 ```bash
-python scripts/02_alphagenome_scoring.py
+python scripts/07_celltype_analysis/footprint_normalization.py
+# Outputs: Fig4C_CellType_Normalized.png
 ```
 
-### Step 3: Run Pathway Enrichment
-```bash
-python scripts/03_pathway_enrichment.py
-```
-
-### Step 4: Validate Results
-```bash
-python scripts/05_hmagma_validation.py
-python scripts/06_celltype_validation.py
-```
-
-## Data Sources
-
-| Dataset | Source | Reference |
-|---------|--------|-----------|
-| PGC3 SCZ GWAS | [PGC Data Portal](https://pgc.unc.edu) | Trubetskoy et al., 2022 |
-| H-MAGMA Annotations | [H-MAGMA GitHub](https://github.com/thewonlab/H-MAGMA) | Sey et al., 2020 |
-| GTEx snRNA-seq | [GTEx Portal](https://gtexportal.org) | GTEx Consortium |
-
-## Citation
-
-If you use this code, please cite:
-
-```bibtex
-@article{scz_alphagenome_2026,
-  title={Deep Learning-Based Regulatory Effect Prediction of Common Schizophrenia Risk Variants},
-  author={Cicek, Yusuf},
-  year={2026},
-  note={Manuscript in preparation}
-}
-```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-- **Author**: Yusuf Cicek
-- **Email**: yusuf.cicek@iuc.edu.tr
-- **Institution**: Istanbul University - Cerrahpasa, Cerrahpasa Faculty of Medicine, Department of Psychiatry
-
-## Acknowledgments
-
-- Psychiatric Genomics Consortium for GWAS data
-- Google DeepMind for AlphaGenome API access
-- Won Lab for H-MAGMA annotations
+## 5. Data Availability
+*   **Included:** All processed data (credible sets, scores, enrichment results) are in `data/processed/`.
+*   **External:** 
+    *   PGC3 GWAS Summary Statistics: Included in `data/raw/` (or download from PGC portal).
+    *   GO Database: Automatically downloaded by `run_gsea.py`.

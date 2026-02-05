@@ -1,0 +1,3 @@
+type,variant,chr,pos,description,impact,resolution
+API_ERROR,rs713692,22,51109735,AlphaGenome API returned error (likely interval boundary issue),Variant excluded from downstream analysis,Documented as limitation; 256/257 variants successfully scored (99.6%)
+GENOME_BOUNDARY,rs713692,22,51109735,Variant near end of chr22; AlphaGenome requires 524kb window,Could not score this variant,Documented as methodological limitation

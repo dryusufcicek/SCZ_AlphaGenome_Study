@@ -1,0 +1,2 @@
+analysis,status,reason,alphagenome_variants_with_expression_effects,variants_validated_by_eqtl,validation_rate,recommendation
+GTEx eQTL Validation,NOT_COMPLETED,GTEx data not available,0,N/A,N/A,Download GTEx data manually or use alternative eQTL catalog

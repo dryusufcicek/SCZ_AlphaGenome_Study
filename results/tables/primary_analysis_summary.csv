@@ -1,0 +1,7 @@
+analysis,key_metric,status
+Variant Scoring,256/257 variants scored,Complete
+GSEA Pathways,1 pathways FDR<0.05,Complete
+ISM TF Binding,112 TF binding effects,Complete
+Multimodal Convergence,0 high-convergence variants,Complete
+Cell Type Enrichment,0 cell types FDR<0.05,Complete (NS)
+Effect Directionality,"10 UP, 0 DOWN",Complete

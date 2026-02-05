@@ -1,0 +1,5 @@
+pathway,n_effects,n_up,n_down,mean_score,dominant_direction
+Calcium,6,6,0,4.392833333333333,UP
+Glutamate,3,3,0,1.0956666666666668,UP
+GABA,2,2,0,7.4425,UP
+Dopamine,1,1,0,0.972,UP

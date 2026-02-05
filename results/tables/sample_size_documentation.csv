@@ -1,0 +1,8 @@
+region,period,n_samples,n_donors,age_min_years,age_max_years,age_mean_years,gender_distribution,limitation
+PFC,prenatal,62,18,-0.6,-0.1,-0.4,"{'M': 38, 'F': 24}",
+PFC,infancy,15,5,0.3,1.0,0.6,"{'M': 11, 'F': 4}",
+PFC,early_childhood,11,4,2.0,4.0,2.8,"{'M': 6, 'F': 5}",
+PFC,late_childhood,11,3,8.0,11.0,9.1,"{'M': 7, 'F': 4}",
+PFC,adolescent,4,1,13.0,13.0,13.0,{'F': 4},CRITICAL - Single donor
+PFC,early_adult,15,4,18.0,23.0,20.1,"{'F': 8, 'M': 7}",
+PFC,adult,15,4,30.0,40.0,35.5,"{'M': 8, 'F': 7}",
