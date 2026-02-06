@@ -4,7 +4,7 @@
 **Affiliation:** Istanbul University - Cerrahpasa
 
 ## Abstract
-Schizophrenia (SCZ) GWAS discovery has outpaced functional understanding, identifying hundreds of non-coding loci whose mechanisms remain obscure. Here, we applied **AlphaGenome**, a deep learning framework, to decode the regulatory syntax of SCZ risk. Initially targeting 257 lead SNPs, we identified a putative convergence on intracellular calcium signaling (*ATP2A2*, *ITPR3*). To rigorously validate this finding against linkage disequilibrium (LD) structure and selection biases, we expanded our analysis to 10,832 candidate causal variants using a **Posterior-Weighted Credible Set** approach. This comprehensive, unbiased modeling revealed that SCZ risk is fundamentally driven by a massive dysregulation of **chromatin control** ($P < 10^{-30}$), which causally propagates to specific deficits in **synaptic transport** and **intracellular calcium homeostasis**. By implementing rigorous real-data chromatin-footprint normalization, we further resolved that these effects are distributed across **Mature Excitatory Neurons** and **Glial Lineages**, challenging the simple "neuron-only" model.
+Schizophrenia (SCZ) GWAS discovery has outpaced functional understanding, identifying hundreds of non-coding loci whose mechanisms remain obscure. Here, we applied **AlphaGenome**, a deep learning framework, to decode the regulatory syntax of SCZ risk. Initially targeting 257 lead SNPs, we identified a putative convergence on intracellular calcium signaling (*ATP2A2*, *ITPR3*). To rigorously validate this finding against linkage disequilibrium (LD) structure and selection biases, we expanded our analysis to 10,832 candidate causal variants using a **Posterior-Weighted Credible Set** approach. This comprehensive, unbiased modeling revealed that SCZ risk is fundamentally driven by a massive dysregulation of **chromatin control** ($P < 10^{-30}$), which causally propagates to specific deficits in **synaptic transport** and **intracellular calcium homeostasis**. By implementing rigorous real-data chromatin-footprint normalization, we further resolved that these effects are **predominantly enriched in mature excitatory neurons with additional contributions from glial regulatory programs**, challenging the simple "neuron-only" model.
 
 ---
 
@@ -53,7 +53,7 @@ This study represents a comprehensive decoding of Schizophrenia risk, constructi
 2.  **Propagation:** This transcriptional instability creates a failure of **Synaptic Maintenance** and **Calcium Buffering** (*ATP2A2*).
 3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, broadening the scope beyond the previous "neuron-only" consensus.
 
-We note that histone genes themselves are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci.
+We note that histone genes themselves are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci. While neuronal regulatory burden remains dominant (affecting more loci), enrichment in microglia and oligodendrocyte progenitors suggests secondary modulation of risk via neuroimmune and myelination-related processes rather than primary causal drivers.
 
 This framework suggests that therapeutic interventions must target the shared chromatin regulation of these networks across the entire neuro-glial unit.
 
