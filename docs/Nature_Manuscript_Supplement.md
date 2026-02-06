@@ -45,7 +45,7 @@ Where:
 **Z-Score Formulation:**
 $$Z_g = \frac{Score_g - \mu_{null}}{\sigma_{null}}$$
 Where $\mu_{null}$ and $\sigma_{null}$ are the mean and standard deviation of scores across the entire 47k gene universe.
-**Result:** A Z-score of 4.0 implies the gene carries a regulatory burden 4 standard deviations above the genome-wide expectation. This empirically calibrated metric allows for fair comparison between genes.
+**Result:** A Z-score of 4.0 implies the gene carries a regulatory burden 4 standard deviations above the genome-wide expectation. This empirically calibrated metric allows for fair comparison between genes. Note that these Z-scores reflect deviations from an empirical genome-wide null distribution and are not directly comparable to standard normal Z statistics.
 
 ## Supplementary Note 6: Sensitivity Analyses
 **Robustness Check:** To ensure results were not driven by extreme outliers (Table 1), we performed a "Leave-One-Percent-Out" sensitivity analysis.

@@ -48,14 +48,14 @@ Previous studies implicated fetal progenitors (iPSCs). We suspected this was con
 ---
 
 ## 4. Discussion
-We present a refined molecular architecture for Schizophrenia. This framework reconciles prior reports of synaptic, calcium, and epigenetic involvement by placing them within a single regulatory cascade:
+We present a refined **regulatory landscape** for Schizophrenia. This framework reconciles prior reports of synaptic, calcium, and epigenetic involvement by placing them within a single regulatory cascade:
 1.  **Mechanism:** Polygenic risk disrupts **Enhancer Syntax** regulating chromatin modifiers (*H2AC20*). Here, "enhancer syntax" refers to the sequence-level organization of transcription factor binding motifs and spacing patterns learned implicitly by AlphaGenome, rather than explicit motif enumeration.
 2.  **Propagation:** This transcriptional instability creates a failure of **Synaptic Maintenance** and **Calcium Buffering** (*ATP2A2*).
-3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, broadening the scope beyond the previous "neuron-only" consensus.
+3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, **refining the previously neuron-dominant model**.
 
 We note that histone genes themselves (e.g., *H2AC20*) are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci. While neuronal regulatory burden remains dominant (affecting more loci), enrichment in microglia and oligodendrocyte progenitors suggests secondary modulation of risk via neuroimmune and myelination-related processes rather than primary causal drivers.
 
-While AlphaGenome is a deep neural network, all downstream inferences in this study are based on calibrated, variant-level predictions aggregated via probabilistic fine-mapping rather than raw model scores. Future work will be required to resolve the precise directionality of regulatory effects at individual loci.
+As with any sequence-based predictor, AlphaGenome captures regulatory potential rather than realized transcriptional output, and thus complements rather than replaces experimental assays. While AlphaGenome is a deep neural network, all downstream inferences in this study are based on calibrated, variant-level predictions aggregated via probabilistic fine-mapping rather than raw model scores. Future work will be required to resolve the precise directionality of regulatory effects at individual loci.
 
 ---
 
