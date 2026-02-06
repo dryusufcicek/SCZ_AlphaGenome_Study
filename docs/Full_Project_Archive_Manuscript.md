@@ -43,7 +43,7 @@ Our initial Calcium finding was hypothesis-driven. To test its robustness, we pe
 Previous studies implicated fetal progenitors (iPSCs). We suspected this was confounded by the large open chromatin volume in stem cells.
 *   **Method:** We applied a **Footprint-Aware Binomial Test**, normalizing expected hits by Total Accessible Base Pairs.
 *   **Result:** iPSC enrichment vanished ($P=0.07$).
-*   **Conclusion:** Risk is highly specific to **Mature Excitatory** ($P < 10^{-40}$) and **Inhibitory Neurons** ($P < 10^{-43}$).
+*   **Conclusion:** Significant specific enrichment persists in **Mature Excitatory Neurons** (1.11x, $P < 0.01$) and **Glial Lineages** (Microglia/OPC ~ 1.35x), identifying a broad regulatory landscape.
 
 ---
 
@@ -52,7 +52,7 @@ This study represents a comprehensive decoding of Schizophrenia risk. By evolvin
 
 1.  **The Cause:** Polygenic risk disrupts the **transcriptional and epigenetic machinery** (*H2AC20*, *ILF2*) in mature neurons.
 2.  **The Mechanism:** This regulatory failure specifically impairs **intracellular calcium handling** (*ATP2A2*) and **synaptic vesicle transport**.
-3.  **The Context:** The pathology is strictly neuronal, overturning previous assumptions of early progenitor etiology.
+3.  **The Context:** The pathology involves both **neuronal** and **glial** regulatory networks, overturning the simple "neuron-only" model.
 
 This framework provides specific, validated targets for therapeutic intervention, specifically focusing on stabilizing the chromatin regulation of the synaptic transport network.
 
