@@ -4,7 +4,7 @@
 **Affiliation:** Istanbul University - Cerrahpasa
 
 ## Abstract
-Schizophrenia (SCZ) GWAS discovery has outpaced functional understanding, identifying hundreds of non-coding loci whose mechanisms remain obscure. Here, we applied **AlphaGenome**, a deep learning framework, to decode the regulatory syntax of SCZ risk. Initially targeting 257 lead SNPs, we identified a putative convergence on intracellular calcium signaling (*ATP2A2*, *ITPR3*). To rigorously validate this finding against linkage disequilibrium (LD) structure and selection biases, we expanded our analysis to 10,832 candidate causal variants using a **Posterior-Weighted Credible Set** approach. This comprehensive, unbiased modeling revealed that SCZ risk is fundamentally driven by a massive dysregulation of **neuronal transcriptional control**, which causally propagates to specific deficits in **synaptic transport** and **intracellular calcium homeostasis**. By implementing chromatin-footprint normalization, we further resolved that **risk enrichment extends beyond neurons to include microglia and OPCs**, challenging the simple "neuron-only" consensus. These findings support a coherent regulatory framework linking non-coding risk to transcriptional and synaptic pathways.
+Schizophrenia (SCZ) GWAS discovery has outpaced functional understanding, identifying hundreds of non-coding loci whose mechanisms remain obscure. Here, we applied **AlphaGenome**, a deep learning framework, to decode the regulatory syntax of SCZ risk. We analyzed **10,832 candidate causal variants** expanded from 237 risk loci. Initially targeting lead SNPs, we identified a putative convergence on intracellular calcium signaling (*ATP2A2*, *ITPR3*). To rigorously validate this finding against linkage disequilibrium (LD) structure and selection biases, we expanded our analysis using a **Posterior-Weighted Credible Set** approach. This comprehensive, unbiased modeling revealed that SCZ risk is fundamentally driven by a massive dysregulation of **neuronal transcriptional control**, which causally propagates to specific deficits in **synaptic transport** and **intracellular calcium homeostasis** (centered on *ATP2A2*). By implementing chromatin-footprint normalization, we further resolved that **risk enrichment extends beyond neurons to include microglia and OPCs**, arguing against progenitor-dominant models of risk variance. These findings support a coherent regulatory framework linking non-coding risk to transcriptional and synaptic pathways.
 
 ...
 
@@ -40,7 +40,7 @@ Genome-wide association studies (GWAS) have identified 287 genomic loci associat
 We deployed **AlphaGenome**, a sequence-based deep learning model, to predict the cell-type-specific impact of variants on gene expression and chromatin topology. This approach enables a systematic and mechanistically grounded functional annotation of PGC3 risk loci, complementing existing proximity- and correlation-based methods.
 
 ## 2. Phase I: The Primary Screen (Lead SNPs)
-Our initial study focused on the 257 lead SNPs defined by the PGC3 GWAS.
+We analyzed **10,832 candidate causal variants** explicitly expanded from the 237 significant loci defined by PGC3 GWAS. Our initial screen focused on the 257 lead SNPs.
 *   **Method:** We scored each lead variant for regulatory impact across 53 relevant biosamples.
 *   **Discovery:** Gene Set Enrichment Analysis (GSEA) identified a significant enrichment of **Intracellular Calcium Signaling** ($P = 0.009$).
 *   **Key Candidates:** The SERCA2 calcium pump (*ATP2A2*) and IP3 Receptor (*ITPR3*) emerged as top targets.
@@ -77,7 +77,7 @@ Previous studies implicated fetal progenitors (iPSCs). We suspected this was con
 We present a refined **regulatory landscape** for Schizophrenia. This framework reconciles prior reports of synaptic, calcium, and epigenetic involvement by placing them within a single regulatory cascade:
 1.  **Mechanism:** Polygenic risk disrupts **Enhancer Syntax** regulating chromatin modifiers (*H2AC20*). Here, "enhancer syntax" refers to the sequence-level organization of transcription factor binding motifs and spacing patterns learned implicitly by AlphaGenome, rather than explicit motif enumeration.
 2.  **Propagation:** This transcriptional instability creates a failure of **Synaptic Maintenance** and **Calcium Buffering** (*ATP2A2*).
-3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, **refining the previously neuron-dominant model**.
+3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, **consistent with emerging neuro-glial models of SCZ pathogenesis**.
 
 We note that histone genes themselves (e.g., *H2AC20*) are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci. While neuronal regulatory burden remains dominant (affecting more loci), enrichment in microglia and oligodendrocyte progenitors suggests secondary modulation of risk via neuroimmune and myelination-related processes rather than primary causal drivers.
 

@@ -4,14 +4,14 @@
 **Affiliation:** Istanbul University - Cerrahpasa
 
 ## Abstract
-Schizophrenia (SCZ) polygenic risk remains poorly understood at the mechanistic level. Here, we applied **AlphaGenome**, a sequence-based deep learning framework, to decode the regulatory impact of 10,832 candidate causal variants prioritized from the PGC3 GWAS. By implementing a rigorous **Posterior-Weighted Credible Set** analysis and **Unbiased Whole-Genome Enrichment** strategy, we demonstrate that SCZ risk converges fundamentally on the disruption of **neuronal transcriptional regulation**, which is accompanied by specific downstream deficits in **synaptic vesicle transport** and **intracellular calcium homeostasis**. Crucially, we show via chromatin-footprint normalization that **risk enrichment extends beyond neurons to include microglia and OPCs**, arguing against progenitor-dominant models of risk variance. These findings support a coherent regulatory framework linking non-coding risk to transcriptional and synaptic pathways.
+schizophrenia (SCZ) polygenic risk remains poorly understood at the mechanistic level. Here, we applied **AlphaGenome**, a sequence-based deep learning framework, to decode the regulatory impact of **10,832 candidate causal variants** prioritized from the PGC3 GWAS. By implementing a rigorous **Posterior-Weighted Credible Set** analysis and **Unbiased Whole-Genome Enrichment** strategy, we demonstrate that SCZ risk converges fundamentally on the disruption of **neuronal transcriptional regulation**, which is accompanied by specific downstream deficits in **synaptic vesicle transport** and **intracellular calcium homeostasis** (centered on *ATP2A2*). Crucially, we show via chromatin-footprint normalization that **risk enrichment extends beyond neurons to include microglia and OPCs**, arguing against progenitor-dominant models of risk variance. These findings support a coherent regulatory framework linking non-coding risk to transcriptional and synaptic pathways.
 
 ...
 
 ## 2. Results
 
 ### 2.1. Deep Learning Prioritization
-Initially targeting 257 lead SNPs, we identified a putative convergence on intracellular calcium signaling (*ATP2A2*, *ITPR3*), **identifying disruption of internal calcium handling as a predicted mechanism**.
+We analyzed **10,832 candidate causal variants** explicitly expanded from the 237 significant loci defined by PGC3 GWAS. In our initial screen of lead SNPs, we identified a putative convergence on intracellular calcium signaling (*ATP2A2*, *ITPR3*), **identifying disruption of internal calcium handling as a predicted mechanism**.
 
 ...
 
@@ -70,13 +70,13 @@ The identification of *H2AC20* and *SERPINC1* as top hits raises the question of
 *   **Result:** While the extreme statistical hyper-significance ($P < 10^{-30}$) attenuated, as expected given the removal of primary drivers, core biological modules including **Synapse Organization** ($P = 0.007$) and **Heterochromatin Organization** ($P = 0.01$) remained significant.
 *   **Conclusion:** Notably, synaptic and chromatin-related terms remained enriched despite the removal of the most extreme regulatory hubs, indicating that convergence is not driven by a single locus but is a widely distributed polygenic property.
 
-### 2.3. The Primary Point of Polygenic Convergence
+### 2.3. Transcriptional Regulation as a Major Convergence Point
 In the unbiased GSEA against 5,000 biological processes, the strongest signal was **Negative Regulation of Transcription** ($P < 10^{-30}$). This suggests that the **primary point of polygenic convergence** in SCZ genetics is the **chromatin machinery** that governs gene expression. Histone genes should be interpreted as markers of this regulatory convergence rather than individual causal effectors.
 
 ### 2.4. Downstream Consequences: Synapse and Calcium
 This upstream transcriptional dysregulation is accompanied by specific downstream failures:
 *   **Vesicle-Mediated Transport** ($P = 8.4 \times 10^{-24}$)
-*   **Intracellular Calcium Homeostasis** ($P = 3.5 \times 10^{-6}$): Validating the disruption of internal calcium handling (*ATP2A2*) as a specific mechanism.
+*   **Intracellular Calcium Homeostasis** ($P = 3.5 \times 10^{-6}$): Identifying disruption of internal calcium handling (*ATP2A2*) as a specific mechanism.
 
 ### 2.5. Dominant Cellular Context
 To resolve developmental timing, we applied **Footprint-Aware Normalization**.
@@ -87,7 +87,7 @@ To resolve developmental timing, we applied **Footprint-Aware Normalization**.
 We present a refined **regulatory landscape** for Schizophrenia. This framework reconciles prior reports of synaptic, calcium, and epigenetic involvement by placing them within a single regulatory cascade:
 1.  **Mechanism:** Polygenic risk disrupts **Enhancer Syntax** regulating chromatin modifiers (*H2AC20*). Here, "enhancer syntax" refers to the sequence-level organization of transcription factor binding motifs and spacing patterns learned implicitly by AlphaGenome, rather than explicit motif enumeration.
 2.  **Propagation:** This transcriptional instability creates a failure of **Synaptic Maintenance** and **Calcium Buffering** (*ATP2A2*).
-3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, **refining the previously neuron-dominant model**.
+3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, **consistent with emerging neuro-glial models of SCZ pathogenesis**.
 
 We note that histone genes themselves (e.g., *H2AC20*) are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci. While neuronal regulatory burden remains dominant (affecting more loci), enrichment in microglia and oligodendrocyte progenitors suggests secondary modulation of risk via neuroimmune and myelination-related processes rather than primary causal drivers.
 
@@ -124,7 +124,7 @@ As with any sequence-based predictor, AlphaGenome captures regulatory potential 
 **Figure 4: Resolving the Cellular Context of Risk.**
 **(a)** Artifactual Enrichment. Standard binomial testing (based on peak counts) suggests enrichment in iPSCs (stem cells).
 **(b)** Normalization Logic. Correction for **Total Accessible Chromatin Volume** reveals that "iPSC enrichment" is a confounding effect of broader open chromatin.
-**(c)** Definitive Specificity. After footprint-aware normalization, risk is enriched in **Mature Excitatory Neurons** ($1.11x$) and **Glial Cells** (Microglia/OPC > $1.3x$), overturning the simple "neuron-only" model.
+**(c)** Definitive Specificity. After footprint-aware normalization, risk is enriched in **Mature Excitatory Neurons** ($1.11x$) and **Glial Cells** (Microglia/OPC > $1.3x$), revealing enrichment beyond neurons to include microglia and OPCs.
 
 **Figure 5: An Integrative Regulatory Framework.**
 Conceptual synthesis of the findings. Polygenic non-coding variants constitute a "grammatical error" in the enhancer syntax of **neuronal chromatin regulators**. This leads to subtle but ubiquitous **transcriptional instability**, which disproportionately impacts systems with high metabolic and transport demands—specifically the **synaptic vesicle cycle** and **calcium buffering**. This reconciles the "Epigenetic" and "Synaptic" hypotheses into a single causal timeline.
