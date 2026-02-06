@@ -49,9 +49,11 @@ To resolve developmental timing, we applied **Footprint-Aware Normalization**.
 
 ## 3. Discussion
 We present a refined molecular architecture for Schizophrenia. This framework reconciles prior reports of synaptic, calcium, and epigenetic involvement by placing them within a single regulatory cascade:
-1.  **Mechanism:** Polygenic risk disrupts **Enhancer Syntax** regulating chromatin modifiers (*H2AC20*).
+1.  **Mechanism:** Polygenic risk disrupts **Enhancer Syntax** regulating chromatin modifiers (*H2AC20*). Here, "enhancer syntax" refers to the sequence-level organization of transcription factor binding motifs and spacing patterns learned implicitly by AlphaGenome, rather than explicit motif enumeration.
 2.  **Propagation:** This transcriptional instability creates a failure of **Synaptic Maintenance** and **Calcium Buffering** (*ATP2A2*).
-3.  **Context:** The pathology is predominantly neuronal.
+3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, broadening the scope beyond the previous "neuron-only" consensus.
+
+We note that histone genes themselves (e.g., *H2AC20*) are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci.
 
 While AlphaGenome is a deep neural network, all downstream inferences in this study are based on calibrated, variant-level predictions aggregated via probabilistic fine-mapping rather than raw model scores. Future work will be required to resolve the precise directionality of regulatory effects at individual loci.
 

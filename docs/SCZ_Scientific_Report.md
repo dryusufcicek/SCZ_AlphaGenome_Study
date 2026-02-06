@@ -49,9 +49,11 @@ Previous studies implicated fetal progenitors. We suspected this was confounded 
 ## 4. Discussion
 This study represents a comprehensive decoding of Schizophrenia risk, constructing a refined pathogenic model:
 
-1.  **The Cause:** Polygenic risk disrupts the **transcriptional and epigenetic machinery** (*H2AC20*) in both neurons and glia.
-2.  **The Context:** Our forensic audit challenges the "neuron-only" dogma, identifying significant glial regulatory burden.
-3.  **The Mechanism:** This cross-cell dysregulation converges on **calcium handling** (*ATP2A2*) and **synaptic vesicle transport**.
+1.  **Mechanism:** Polygenic risk disrupts **Enhancer Syntax** regulating chromatin modifiers (*H2AC20*). Here, "enhancer syntax" refers to the sequence-level organization of transcription factor binding motifs and spacing patterns learned implicitly by AlphaGenome.
+2.  **Propagation:** This transcriptional instability creates a failure of **Synaptic Maintenance** and **Calcium Buffering** (*ATP2A2*).
+3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, broadening the scope beyond the previous "neuron-only" consensus.
+
+We note that histone genes themselves are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci.
 
 This framework suggests that therapeutic interventions must target the shared chromatin regulation of these networks across the entire neuro-glial unit.
 
