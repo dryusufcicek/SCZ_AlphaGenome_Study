@@ -1,10 +1,46 @@
-# Deep Learning-Based Functional Annotation of Regulatory Risk in Schizophrenia
+# Sequence-Based Deep Learning Identifies ATP2A2-Centered Calcium Dysregulation in Schizophrenia Polygenic Risk
 
 **Authors:** Yusuf Cicek, et al.
 **Affiliation:** Istanbul University - Cerrahpasa
 
 ## Abstract
-Schizophrenia (SCZ) polygenic risk remains poorly understood at the mechanistic level. Here, we applied **AlphaGenome**, a sequence-based deep learning framework, to decode the regulatory impact of 10,832 candidate causal variants prioritized from the PGC3 GWAS. By implementing a rigorous **Posterior-Weighted Credible Set** analysis and **Unbiased Whole-Genome Enrichment** strategy, we demonstrate that SCZ risk converges fundamentally on the disruption of **neuronal transcriptional regulation** ($P < 10^{-30}$), which is accompanied by specific downstream deficits in **synaptic vesicle transport** ($P < 10^{-24}$) and **intracellular calcium homeostasis** ($P < 10^{-5}$). Crucially, we show via chromatin-footprint normalization that these effects are **predominantly enriched in mature excitatory neurons with additional contributions from glial regulatory programs**, arguing against progenitor-dominant models of risk variance. These findings support a coherent regulatory framework linking non-coding risk to transcriptional and synaptic pathways.
+Schizophrenia (SCZ) polygenic risk remains poorly understood at the mechanistic level. Here, we applied **AlphaGenome**, a sequence-based deep learning framework, to decode the regulatory impact of 10,832 candidate causal variants prioritized from the PGC3 GWAS. By implementing a rigorous **Posterior-Weighted Credible Set** analysis and **Unbiased Whole-Genome Enrichment** strategy, we demonstrate that SCZ risk converges fundamentally on the disruption of **neuronal transcriptional regulation**, which is accompanied by specific downstream deficits in **synaptic vesicle transport** and **intracellular calcium homeostasis**. Crucially, we show via chromatin-footprint normalization that **risk enrichment extends beyond neurons to include microglia and OPCs**, arguing against progenitor-dominant models of risk variance. These findings support a coherent regulatory framework linking non-coding risk to transcriptional and synaptic pathways.
+
+...
+
+## 2. Results
+
+### 2.1. Deep Learning Prioritization
+Initially targeting 257 lead SNPs, we identified a putative convergence on intracellular calcium signaling (*ATP2A2*, *ITPR3*), **identifying disruption of internal calcium handling as a predicted mechanism**.
+
+...
+
+### 2.3. Transcriptional Regulation as a Major Point of Convergence
+...
+
+### 2.5. Cellular Specificity
+...
+
+**(c)** Definitive Specificity. After footprint-aware normalization, risk is enriched in **Mature Excitatory Neurons** and **Glial Cells** (Microglia/OPC), indicating that **risk enrichment extends beyond neurons to include microglia and OPCs**.
+
+**Figure 5: An Integrative Regulatory Framework.**
+...
+
+## 3. Discussion
+We present a refined **regulatory landscape** for Schizophrenia. This framework reconciles prior reports of synaptic, calcium, and epigenetic involvement by placing them within a single regulatory cascade:
+1.  **Mechanism:** ...
+2.  **Propagation:** ...
+3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, **consistent with emerging evidence for neuro-glial interactions in SCZ pathogenesis**.
+
+...
+
+**Limitations:**
+Our study has several limitations. First, as with any sequence-based predictor, AlphaGenome captures regulatory potential rather than realized transcriptional output, and thus complements rather than replaces experimental assays. Second, while we prioritized variants using fine-mapping, the precise causal nucleotide at each locus requires experimental confirmation. Third, our cell-type specificity analysis relies on publicly available ATAC-seq atlases, which may not capture all developmental stages. Finally, while we identify a convergence on Calcium signaling, the specific downstream physiological consequences await in vivo validation.
+
+## 4. Methods
+**Variant Prioritization:** ...
+**Scoring:** AlphaGenome sequence-to-activity prediction. Scores represent the maximum absolute predicted log-fold change (LFC) across **53 brain-relevant regulatory tracks** (e.g., Prefrontal Cortex, Hippocampus, Anterior Cingulate Cortex).
+...
 
 ---
 

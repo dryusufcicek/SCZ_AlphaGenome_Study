@@ -1,6 +1,6 @@
 # Supplementary Information
 
-**Title:** Deep Learning-Based Functional Annotation of Regulatory Risk in Schizophrenia
+**Title:** Sequence-Based Deep Learning Identifies ATP2A2-Centered Calcium Dysregulation in Schizophrenia Polygenic Risk
 **Authors:** Yusuf Cicek, et al.
 
 ---
