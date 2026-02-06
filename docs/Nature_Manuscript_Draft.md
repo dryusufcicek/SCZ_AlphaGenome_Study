@@ -1,4 +1,4 @@
-# Deep Learning Reveals the Regulatory Architecture of Schizophrenia Risk
+# Deep Learning-Based Functional Annotation of Regulatory Risk in Schizophrenia
 
 **Authors:** Yusuf Cicek, et al.
 **Affiliation:** Istanbul University - Cerrahpasa
@@ -61,7 +61,7 @@ While AlphaGenome is a deep neural network, all downstream inferences in this st
 
 ## 4. Methods
 **Variant Prioritization:** PGC3 GWAS variants ($P < 5 \times 10^{-8}$) weighted by Approximate Bayes Factor Posterior Probabilities.
-**Scoring:** AlphaGenome sequence-to-activity prediction.
+**Scoring:** AlphaGenome sequence-to-activity prediction. Scores represent the maximum absolute predicted log-fold change (LFC) across brain-relevant regulatory tracks.
 **Robustness:** Sensitivity analysis performed by excluding top 1 percentile of gene scores.
 **Enrichment:** Unbiased GSEA (Mann-Whitney U) against GO Biological Process 2023.
 **Cell Type Normalization:** Binomial test adjusted for Total Accessible Base Pairs (bp) per cell type.
@@ -90,5 +90,5 @@ While AlphaGenome is a deep neural network, all downstream inferences in this st
 **(b)** Normalization Logic. Correction for **Total Accessible Chromatin Volume** reveals that "iPSC enrichment" is a confounding effect of broader open chromatin.
 **(c)** Definitive Specificity. After footprint-aware normalization, risk is enriched in **Mature Excitatory Neurons** ($1.11x$) and **Glial Cells** (Microglia/OPC > $1.3x$), overturning the simple "neuron-only" model.
 
-**Figure 5: The Unified "Epigenetic-Synaptic" Model.**
+**Figure 5: An Integrative Regulatory Framework.**
 Conceptual synthesis of the findings. Polygenic non-coding variants constitute a "grammatical error" in the enhancer syntax of **neuronal chromatin regulators**. This leads to subtle but ubiquitous **transcriptional instability**, which disproportionately impacts systems with high metabolic and transport demands—specifically the **synaptic vesicle cycle** and **calcium buffering**. This reconciles the "Epigenetic" and "Synaptic" hypotheses into a single causal timeline.

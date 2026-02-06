@@ -1,4 +1,4 @@
-# Deep Learning Decodes the Regulatory Architecture of Schizophrenia Risk
+# Deep Learning-Based Functional Annotation of Regulatory Risk in Schizophrenia
 
 **Authors:** Yusuf Cicek, et al.
 **Affiliation:** Istanbul University - Cerrahpasa
@@ -62,5 +62,5 @@ This framework suggests that therapeutic interventions must target the shared ch
 ## 5. Methods Summary
 *   **GWAS:** PGC3 Schizophrenia ($N=320k$).
 *   **Model:** AlphaGenome (DeepMind API).
-*   **Scoring:** Log-Fold Change (LFC).
+*   **Scoring:** AlphaGenome sequence-to-activity prediction. Scores represent the maximum absolute predicted log-fold change (LFC) across brain-relevant regulatory tracks.
 *   **Code Availability:** All scripts are available in the repository.

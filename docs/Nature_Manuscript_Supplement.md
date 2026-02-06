@@ -1,6 +1,6 @@
 # Supplementary Information
 
-**Title:** Deep Learning Reveals the Regulatory Architecture of Schizophrenia Risk
+**Title:** Deep Learning-Based Functional Annotation of Regulatory Risk in Schizophrenia
 **Authors:** Yusuf Cicek, et al.
 
 ---
