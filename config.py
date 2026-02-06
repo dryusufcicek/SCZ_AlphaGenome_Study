@@ -26,8 +26,14 @@ RESULTS_DIR = BASE_DIR / "results"
 FIGURES_DIR = RESULTS_DIR / "figures"
 TABLES_DIR = RESULTS_DIR / "tables"
 
+# Canonical subdirectories for processed data
+CS_DIR = PROCESSED_DIR / "credible_sets"
+AG_DIR = PROCESSED_DIR / "alphagenome_scores"
+GENE_DIR = PROCESSED_DIR / "gene_scores"
+CT_DIR = PROCESSED_DIR / "celltype_enrichment"
+
 # Create directories if they don't exist
-for dir_path in [RAW_DIR, PROCESSED_DIR, FIGURES_DIR, TABLES_DIR]:
+for dir_path in [RAW_DIR, PROCESSED_DIR, FIGURES_DIR, TABLES_DIR, CS_DIR, AG_DIR, GENE_DIR, CT_DIR]:
     dir_path.mkdir(parents=True, exist_ok=True)
 
 # =============================================================================
