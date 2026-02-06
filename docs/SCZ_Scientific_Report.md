@@ -6,34 +6,7 @@
 ## Abstract
 Schizophrenia (SCZ) GWAS discovery has outpaced functional understanding, identifying hundreds of non-coding loci whose mechanisms remain obscure. Here, we applied **AlphaGenome**, a deep learning framework, to decode the regulatory syntax of SCZ risk. We analyzed **10,832 candidate causal variants** expanded from 237 risk loci. Initially targeting lead SNPs, we identified a putative convergence on intracellular calcium signaling (*ATP2A2*, *ITPR3*). To rigorously validate this finding against linkage disequilibrium (LD) structure and selection biases, we expanded our analysis using a **Posterior-Weighted Credible Set** approach. This comprehensive, unbiased modeling revealed that SCZ risk is fundamentally driven by a massive dysregulation of **neuronal transcriptional control**, which causally propagates to specific deficits in **synaptic transport** and **intracellular calcium homeostasis** (centered on *ATP2A2*). By implementing chromatin-footprint normalization, we further resolved that **risk enrichment extends beyond neurons to include microglia and OPCs**, arguing against progenitor-dominant models of risk variance. These findings support a coherent regulatory framework linking non-coding risk to transcriptional and synaptic pathways.
 
-...
 
-## 2. Phase I: The Primary Screen (Lead SNPs)
-...
-*   **Discovery:** Gene Set Enrichment Analysis (GSEA) identified a significant enrichment of **Intracellular Calcium Signaling** ($P = 0.009$).
-*   **Key Candidates:** The SERCA2 calcium pump (*ATP2A2*) and IP3 Receptor (*ITPR3*) emerged as top targets, **identifying disruption of internal calcium handling as a predicted mechanism**.
-
-...
-
-## 4. Discussion
-We present a refined **regulatory landscape** for Schizophrenia. This framework reconciles prior reports of synaptic, calcium, and epigenetic involvement by placing them within a single regulatory cascade:
-1.  **Mechanism:** ...
-2.  **Propagation:** ...
-3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, **consistent with emerging neuro-glial models of SCZ pathogenesis**.
-
-We note that histone genes themselves are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci. While neuronal regulatory burden remains dominant (affecting more loci), enrichment in microglia and oligodendrocyte progenitors suggests secondary modulation of risk via neuroimmune and myelination-related processes rather than primary causal drivers.
-
-As with any sequence-based predictor, AlphaGenome captures regulatory potential rather than realized transcriptional output, and thus complements rather than replaces experimental assays.
-
-This framework suggests that therapeutic interventions must target the shared chromatin regulation of these networks across the entire neuro-glial unit.
-
-## 5. Methods Summary
-*   **GWAS:** PGC3 Schizophrenia ($N=320k$).
-*   **Model:** AlphaGenome (DeepMind API).
-*   **Scoring:** AlphaGenome sequence-to-activity prediction. Scores represent the maximum absolute predicted log-fold change (LFC) across **53 brain-relevant regulatory tracks**.
-...
-
----
 
 ## 1. Introduction
 Genome-wide association studies (GWAS) have identified 287 genomic loci associated with schizophrenia (Trubetskoy et al., 2022). However, standard post-GWAS methods (H-MAGMA, proximity mapping) often rely on broad chromatin correlations that lack the resolution to distinguish causal regulatory variants from LD proxies.
