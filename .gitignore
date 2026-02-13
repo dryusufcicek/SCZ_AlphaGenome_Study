@@ -43,3 +43,7 @@ data/processed/peaks/
 data/processed/backup/
 data/processed/validation/
 data/processed/alphagenome_variant_scores.csv.bak_schema_fix
+
+# Local scratch outputs
+celltype_enrichment_results.txt
+celltype_log.txt
