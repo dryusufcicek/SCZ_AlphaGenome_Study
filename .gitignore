@@ -36,3 +36,10 @@ config_local.py
 # Large result files
 results/*.csv
 !results/example_*.csv
+
+# Large local resources not intended for repository history
+data/external/
+data/processed/peaks/
+data/processed/backup/
+data/processed/validation/
+data/processed/alphagenome_variant_scores.csv.bak_schema_fix

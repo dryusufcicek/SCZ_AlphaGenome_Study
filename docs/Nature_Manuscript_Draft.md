@@ -1,92 +1,51 @@
-# Sequence-Based Deep Learning Identifies ATP2A2-Centered Calcium Dysregulation in Schizophrenia Polygenic Risk
+# Sequence-Based Regulatory Scoring of Schizophrenia Credible-Set Variants with AlphaGenome
 
-**Authors:** Yusuf Cicek, et al.
-**Affiliation:** Istanbul University - Cerrahpasa
+**Authors:** Yusuf Cicek et al.  
+**Project repository:** `AlphaGenome_SCZ`
 
 ## Abstract
-schizophrenia (SCZ) polygenic risk remains poorly understood at the mechanistic level. Here, we applied **AlphaGenome**, a sequence-based deep learning framework, to decode the regulatory impact of **10,832 candidate causal variants** prioritized from the PGC3 GWAS. By implementing a rigorous **Posterior-Weighted Credible Set** analysis and **Unbiased Whole-Genome Enrichment** strategy, we demonstrate that SCZ risk converges fundamentally on the disruption of **neuronal transcriptional regulation**, which is accompanied by specific downstream deficits in **synaptic vesicle transport** and **intracellular calcium homeostasis** (centered on *ATP2A2*). Crucially, we show via chromatin-footprint normalization that **risk enrichment extends beyond neurons to include microglia and OPCs**, arguing against progenitor-dominant models of risk variance. These findings support a coherent regulatory framework linking non-coding risk to transcriptional and synaptic pathways.
+Large schizophrenia genome-wide association studies (GWAS) have identified hundreds of loci, but translating non-coding signals into mechanistic hypotheses remains difficult. We analyzed 20,591 fine-mapped variants from 249 schizophrenia loci and scored regulatory effects using AlphaGenome. After posterior-probability weighting and gene-level aggregation, 483 genes had non-zero regulatory burden in this dataset. Empirical calibration against a genome-wide gene universe (19,452 genes) enabled rank-based pathway enrichment across global and modality-specific scores. In the primary weighted-score analysis, the strongest signals were in muscle-contraction and calcium-regulation terms, while modality-stratified analyses recurrently highlighted reticulophagy and adenylate-cyclase regulatory pathways. Cell-type footprint normalization using adult and fetal brain accessibility peak sets showed significant enrichment only for fetal progenitor consensus peaks (P = 0.010, enrichment = 1.04), with excitatory neuron enrichment near unity (P = 0.383, enrichment = 1.01). In orthogonal checks, 9,321 of 20,591 variants overlapped adult brain Hi-C anchors (45.27%; 1.21x vs anchor coverage expectation), and overlap with SCHEMA-flagged genes recovered GRIN2A and SP4 (hypergeometric P = 0.00364). These results provide a reproducible regulatory prioritization workflow, while also revealing dataset- and mapping-dependent constraints that should be addressed before strong biological claims are made.
 
-## 1. Introduction
-Schizophrenia (SCZ) is highly heritable, yet the functional logic of its non-coding risk variants remains obscure. Current methods relying on proximity or broad chromatin interactions often yield non-specific results. Unlike proximity-based or correlation-driven methods, sequence-based models like AlphaGenome directly infer the **regulatory grammar** perturbed by non-coding variants. This approach enables a systematic and mechanistically grounded functional annotation of PGC3 risk loci, complementing existing proximity- and correlation-based methods.
+## Introduction
+Schizophrenia has substantial heritable risk, and the latest large-scale GWAS meta-analysis reported 287 associated loci while emphasizing enrichment in neuronal systems and synaptic biology. That study also showed that fine-mapped common-variant candidates overlap rare-variant schizophrenia genes, including GRIN2A and SP4, supporting convergence between common and rare architectures. In parallel, exome-based rare-variant analysis identified ten genes with substantial schizophrenia risk and 32 genes at false-discovery-rate significance, again highlighting neuronal and synaptic biology.
 
-## 2. Results
+Despite these advances, most associated variants are non-coding, and functional interpretation remains the principal bottleneck. Sequence-to-function foundation models are designed to bridge this gap by predicting molecular regulatory consequences directly from DNA context. AlphaGenome is a recent unified model that accepts 1 Mb sequence context and jointly predicts thousands of tracks across chromatin accessibility, histone marks, transcriptional outputs, splicing-related outputs, and chromatin-contact modalities, with strong benchmarked variant-effect performance.
 
-### 2.1. Identification and Classification of High-Confidence Drivers
-To avoid the limitations of "Lead SNP" analysis and selection bias ("Winner's Curse"), we prioritized **10,832 variants** ($P < 5 \times 10^{-8}$) clustered into 237 loci using **Posterior Probabilities** derived from probabilistic fine-mapping.
+This project applies AlphaGenome to schizophrenia fine-mapped variants and integrates outputs with posterior weighting, empirical calibration, pathway enrichment, cell-type accessibility footprints, Hi-C overlap, and SCHEMA convergence checks. The purpose is to provide a transparent and fully reproducible prioritization pipeline using local project assets, while explicitly reporting where data availability or schema constraints limit inference.
 
-To interpret the top hits biologically, we classified high-scoring genes into three distinct functional categories (Table 1).
-*Note: Classification was based on brain expression specificity, functional annotation, and intolerance metrics (pLI), rather than statistical score alone.*
+## Results
+We started from `data/processed/credible_sets/scz_credible_sets_official.csv`, containing 20,591 variants in 249 loci. A schema-repair step reconstructed a canonical variant-score matrix with complete SNP coverage after detecting mixed historical row formats in the scoring file. The repaired file preserved all 20,591 SNP identifiers and removed previous variant loss in downstream steps. The target gene assignment column remained missing for 302 variants.
 
-**Table 1: Functional Classification of Top Regulatory Drivers**
-| Category | Criteria | Example Genes | Z-Score | Interpretation |
-| :--- | :--- | :--- | :--- | :--- |
-| **Regulatory Machinery** | Histones, TFs, Chromatin Modifiers | *H2AC20*, *ILF2*, *SETD1A* | 113.3 | Upstream modulators of gene expression networks. |
-| **Neuronal Effectors** | Synaptic, Ion Channels, Transporters | *ATP2A2*, *SYNGAP1*, *ITPR3* | 16.5 | Downstream mediators of physiological function. |
-| **Pleiotropic/Housekeeping** | Ubiquitous expression, High constitutive activity | *SERPINC1*, *RPS27* | 120.7 | Likely targets of high-density regulatory hubs; may represent broad cellular stress. |
+Posterior-weighted aggregation yielded 483 genes with non-zero weighted burden. Empirical calibration against the local gene universe produced `gene_z_scores.csv` with 19,452 genes and modality-specific z-columns (`z_DNase`, `z_H3K27ac`, `z_H3K4me1`, `z_H3K4me3`, `z_CAGE`, `z_CTCF`, `z_RNA`) in addition to global `z_score`. The strongest weighted genes in this run included ENSG00000278217, TMSB4XP8, RPL23AP42, ACTC1, and RPL39P3.
 
-This classification reveals that while "Regulatory Machinery" genes (like *H2AC20*) bear the highest statistical burden, the physiological specificity is provided by the "Neuronal Effectors" (*ATP2A2*).
+In the global weighted-score enrichment (`gsea_enrichment_score.csv`), the top pathways were Regulation of Smooth Muscle Contraction (FDR 6.75e-18), Regulation of Muscle Contraction (FDR 1.24e-07), and heart/cardiac contraction regulation terms. In modality-specific analyses, top-ranked pathways consistently included Reticulophagy and Regulation of Adenylate Cyclase Activity, with significant but modest FDR values compared with the most extreme global signals. A combined top-50 summary across eight score spaces is provided in `gsea_enrichment_ALL_MODALITIES_summary.csv`.
 
-### 2.2. Robustness of the Transcriptional Signal
-The identification of *H2AC20* and *SERPINC1* as top hits raises the question of whether the Transcriptional Dysregulation signal is driven solely by these extreme outliers.
-*   **Sensitivity Analysis:** To test robustness, we removed the top 1% highest-burden genes (including *H2AC20* and *SERPINC1*) and repeated the Unbiased GSEA.
-*   **Result:** While the extreme statistical hyper-significance ($P < 10^{-30}$) attenuated, as expected given the removal of primary drivers, core biological modules including **Synapse Organization** ($P = 0.007$) and **Heterochromatin Organization** ($P = 0.01$) remained significant.
-*   **Conclusion:** Notably, synaptic and chromatin-related terms remained enriched despite the removal of the most extreme regulatory hubs, indicating that convergence is not driven by a single locus but is a widely distributed polygenic property.
+Cell-type footprint normalization with Corces adult brain cluster peaks and Trevino fetal consensus peaks returned near-null enrichment for most adult classes, including excitatory neurons (observed 946 vs expected 936.7; enrichment 1.01; P = 0.383), inhibitory neurons (0.94; P = 0.926), and microglia (1.02; P = 0.352). The only nominally significant class after this normalization was fetal progenitors (observed 2,532 vs expected 2,424.0; enrichment 1.04; P = 0.010).
 
-### 2.3. Transcriptional Regulation as a Major Convergence Point
-In the unbiased GSEA against 5,000 biological processes, the strongest signal was **Negative Regulation of Transcription** ($P < 10^{-30}$). This suggests that the **primary point of polygenic convergence** in SCZ genetics is the **chromatin machinery** that governs gene expression. Histone genes should be interpreted as markers of this regulatory convergence rather than individual causal effectors.
+In validation analyses, 9,321 of 20,591 variants overlapped merged adult-brain Hi-C anchors, corresponding to 45.27% overlap and 1.21x enrichment relative to merged-anchor genomic coverage. SCHEMA convergence, using SCHEMA-flagged genes from the extended PGC3 table available in the local validation directory, produced two overlapping genes (GRIN2A and SP4) with hypergeometric P = 0.00364. GTEx eQTL validation remained incomplete in this run because the scripted public URLs did not return downloadable brain files; the pipeline therefore writes an explicit stub report rather than a fabricated concordance estimate.
 
-### 2.4. Downstream Consequences: Synapse and Calcium
-This upstream transcriptional dysregulation is accompanied by specific downstream failures:
-*   **Vesicle-Mediated Transport** ($P = 8.4 \times 10^{-24}$)
-*   **Intracellular Calcium Homeostasis** ($P = 3.5 \times 10^{-6}$): Identifying disruption of internal calcium handling (*ATP2A2*) as a specific mechanism.
+## Discussion
+This analysis is consistent with the core schizophrenia genetics literature in one narrow but important respect: overlap with GRIN2A and SP4 is recovered in the common-versus-rare convergence check, aligning with prior reports that these genes sit at the interface of common and rare schizophrenia risk architectures. Beyond that point, however, the present output profile does not replicate the strongest neuron/synapse-dominant pathway pattern reported in the foundational GWAS fine-mapping work, and this discrepancy should be treated as a primary interpretive signal rather than ignored.
 
-### 2.5. Dominant Cellular Context
-To resolve developmental timing, we applied **Footprint-Aware Normalization**.
-*   **Result:** The bias towards progenitors vanished after normalization ($P>0.05$).
-*   **Conclusion:** Risk is enriched in **Mature Excitatory Neurons** ($1.11x, P=0.007$) and **Glial Lineages** (Microglia: 1.32x, OPC: 1.39x), identifying a broader neuro-glial regulatory risk.
+Several technical features likely contribute to this divergence. First, target-gene attribution in the current variant scoring file is sparse and partly historical, with modality values available for a subset of variants only. Second, weighted aggregation in this pipeline follows a single target-gene assignment per variant, which can amplify assignment bias and distort downstream pathway composition. Third, enrichment outcomes are sensitive to the scoring distribution and background handling; although the current implementation is statistically consistent and reproducible, it is still dependent on upstream gene mapping assumptions rather than experimentally validated causal assignments.
 
-## 3. Discussion
-We present a refined **regulatory landscape** for Schizophrenia. This framework reconciles prior reports of synaptic, calcium, and epigenetic involvement by placing them within a single regulatory cascade:
-1.  **Mechanism:** Polygenic risk disrupts **Enhancer Syntax** regulating chromatin modifiers (*H2AC20*). Here, "enhancer syntax" refers to the sequence-level organization of transcription factor binding motifs and spacing patterns learned implicitly by AlphaGenome, rather than explicit motif enumeration.
-2.  **Propagation:** This transcriptional instability creates a failure of **Synaptic Maintenance** and **Calcium Buffering** (*ATP2A2*).
-3.  **Context:** The pathology involves both **neuronal** and **glial** regulatory networks, **consistent with emerging neuro-glial models of SCZ pathogenesis**.
+The cell-type analysis similarly urges caution. The normalized enrichment profile does not support strong mature-neuron specificity in this run and instead points to a modest fetal progenitor signal. This does not by itself contradict prior neuronal enrichment findings from large GWAS frameworks, because those frameworks and this project use different mapping and aggregation layers; however, it indicates that claims of robust neuron-specific regulatory concentration are not warranted from the current output alone.
 
-We note that histone genes themselves (e.g., *H2AC20*) are unlikely to be dosage-sensitive causal drivers; rather, their recurrent identification reflects convergence on chromatin regulatory states that are broadly encoded by these loci. While neuronal regulatory burden remains dominant (affecting more loci), enrichment in microglia and oligodendrocyte progenitors suggests secondary modulation of risk via neuroimmune and myelination-related processes rather than primary causal drivers.
+The practical value of this work is therefore methodological as much as biological: the repository now executes a coherent pipeline that preserves variant coverage, avoids silent schema corruption, separates explicit validation from unavailable validation, and generates internally consistent manuscript assets. The next scientific priority is not narrative expansion but data-hardening: complete modality coverage for all credible-set variants, coordinate-level harmonization against external eQTL resources, and sensitivity analyses under alternative variant-to-gene assignment rules.
 
-As with any sequence-based predictor, AlphaGenome captures regulatory potential rather than realized transcriptional output, and thus complements rather than replaces experimental assays. While AlphaGenome is a deep neural network, all downstream inferences in this study are based on calibrated, variant-level predictions aggregated via probabilistic fine-mapping rather than raw model scores. Future work will be required to resolve the precise directionality of regulatory effects at individual loci.
+## Methods Summary
+Variants were loaded from the local official schizophrenia credible-set file and combined with AlphaGenome variant scores after schema normalization. Gene-level burden was computed as posterior-probability-weighted sums of target-gene effects. Empirical z-scores were derived against the full local universe of genes. Pathway enrichment used one-sided Mann-Whitney U testing with Benjamini-Hochberg correction. Cell-type overlap used merged peak footprints from adult and fetal single-cell accessibility resources with binomial testing against genomic footprint fractions. Hi-C overlap used merged adult-brain loop anchors. SCHEMA convergence used hypergeometric overlap testing against SCHEMA-flagged genes in the local extended-data table.
 
----
+## Figure Legends
+**Figure 2A (`results/figures/Fig2A_Regulatory_Landscape.png`)** shows ranked empirical z-scores across the calibrated gene universe with top genes annotated.  
+**Figure 2C (`results/figures/Fig2C_Sensitivity_Comparison.png`)** compares top pathway significance between primary and strict sensitivity-filtered runs.  
+**Figure 4C (`results/figures/Fig4C_CellType_Specificity.png`)** displays footprint-normalized cell-type enrichment as -log10(P).  
+**Score distribution (`results/figures/score_distribution_z.png`)** shows the genome-wide weighted-score distribution used for empirical calibration.
 
-## 4. Methods
-**Variant Prioritization:** PGC3 GWAS variants ($P < 5 \times 10^{-8}$) weighted by Approximate Bayes Factor Posterior Probabilities.
-**Scoring:** AlphaGenome sequence-to-activity prediction. Scores represent the maximum absolute predicted log-fold change (LFC) across brain-relevant regulatory tracks.
-**Robustness:** Sensitivity analysis performed by excluding top 1 percentile of gene scores.
-**Enrichment:** Unbiased GSEA (Mann-Whitney U) against GO Biological Process 2023.
-**Cell Type Normalization:** Binomial test adjusted for Total Accessible Base Pairs (bp) per cell type.
-
----
-
-## 6. Figure Legends
-
-**Figure 1: Deep Learning Decodes the Regulatory Syntax of Schizophrenia Risk.**
-**(a)** Study design. 10,832 genome-wide significant variants ($P < 5 \times 10^{-8}$) from PGC3 were retained and clustered into 237 loci.
-**(b)** Schematic of the **Posterior-Weighted Aggregation** method. Unlike standard "Lead SNP" approaches, AlphaGenome scores are weighted by the variant's approximate posterior probability ($PP$), ensuring that gene scores reflect the cumulative burden of likely causal variants while downweighting LD artifacts.
-**(c)** Empirical Calibration. Gene scores are standardized against a whole-genome null distribution ($N=47,808$), yielding Z-scores that represent the deviation from expected background regulatory load.
-
-**Figure 2: Polygenic Risk Converges on Transcriptional Machinery.**
-**(a)** Regulatory Manhattan Plot. The gene-level regulatory burden (Z-score) across the genome. High-confidence drivers include *H2AC20* (Chr 6), *SERPINC1* (Chr 1), and *ILF2* (Chr 1).
-**(b)** Unbiased GSEA. Rank-ordered enrichment of 5,000 GO Biological Processes. The top signal, **Negative Regulation of Transcription** ($P < 10^{-30}$), dominates the landscape.
-**(c)** Sensitivity Analysis. Enrichment significance remains robust ($P < 0.01$) even after removing the top 1% of highest-scoring genes, confirming that this convergence is a broad polygenic property and not an artifact of outlier loci.
-
-**Figure 3: A Hierarchy of Regulatory Dysfunction.**
-**(a)** Functional Heatmap. Enriched pathways clustered by biological scaling. "Transcriptional Regulation" terms overlap with "Chromatin Assembly," while distinct clusters form for "Synaptic Transport" and "Calcium Homeostasis."
-**(b)** The Calcium Module. Zoom-in on the **Intracellular Calcium Homeostasis** pathway, highlighting the specific disruption of *ATP2A2* (SERCA2) and *ITPR3* relative to voltage-gated channels.
-**(c)** Regulatory-to-Effector Flow. Network schematic illustrating how upstream hits (Histones/TFs) logically precede downstream deficits (Vesicle Transport).
-
-**Figure 4: Resolving the Cellular Context of Risk.**
-**(a)** Artifactual Enrichment. Standard binomial testing (based on peak counts) suggests enrichment in iPSCs (stem cells).
-**(b)** Normalization Logic. Correction for **Total Accessible Chromatin Volume** reveals that "iPSC enrichment" is a confounding effect of broader open chromatin.
-**(c)** Definitive Specificity. After footprint-aware normalization, risk is enriched in **Mature Excitatory Neurons** ($1.11x$) and **Glial Cells** (Microglia/OPC > $1.3x$), revealing enrichment beyond neurons to include microglia and OPCs.
-
-**Figure 5: An Integrative Regulatory Framework.**
-Conceptual synthesis of the findings. Polygenic non-coding variants constitute a "grammatical error" in the enhancer syntax of **neuronal chromatin regulators**. This leads to subtle but ubiquitous **transcriptional instability**, which disproportionately impacts systems with high metabolic and transport demands—specifically the **synaptic vesicle cycle** and **calcium buffering**. This reconciles the "Epigenetic" and "Synaptic" hypotheses into a single causal timeline.
+## References
+1. Trubetskoy V, Pardiñas AF, Qi T, et al. Mapping genomic loci implicates genes and synaptic biology in schizophrenia. *Nature*. 2022;604:502-508. doi:10.1038/s41586-022-04434-5  
+2. Singh T, Poterba T, Curtis D, et al. Rare coding variants in ten genes confer substantial risk for schizophrenia. *Nature*. 2022;604:509-516. doi:10.1038/s41586-022-04556-w  
+3. Avsec Z, Latysheva N, Cheng J, et al. Advancing regulatory variant effect prediction with AlphaGenome. *Nature*. 2026;649. doi:10.1038/s41586-025-10014-0  
+4. Corces MR, Shcherbina A, Kundu S, et al. Single-cell epigenomic analyses implicate candidate causal variants at inherited risk loci for Alzheimer's and Parkinson's diseases. *Nat Genet*. 2020;52(11):1158-1168. doi:10.1038/s41588-020-00721-x  
+5. Trevino AE, Müller F, Andersen J, et al. Chromatin and gene-regulatory dynamics of the developing human cerebral cortex at single-cell resolution. *Cell*. 2021;184(19):5053-5069.e23. doi:10.1016/j.cell.2021.07.039  
+6. GTEx Consortium. The GTEx Consortium atlas of genetic regulatory effects across human tissues. *Science*. 2020;369(6509):1318-1330. doi:10.1126/science.aaz1776

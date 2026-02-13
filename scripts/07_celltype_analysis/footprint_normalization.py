@@ -50,17 +50,14 @@ GENOME_SIZE_BP = 2.8e9  # Mappable human genome
 column_map = {'P-value': 'P_Value', 'P_Value': 'P_Value'} # varying column names support
 
 def load_variants():
-    """Load variants from PROXY credible sets."""
-    file = CS_DIR / "scz_credible_sets_proxy.csv"
+    """Load variants from official PGC3 credible sets."""
+    file = CS_DIR / "scz_credible_sets_official.csv"
     if not file.exists():
-        file = PROCESSED_DIR / "scz_lead_snps.csv"
-        
-    if not file.exists():
-        print("Error: No variant file found.")
+        print(f"Error: Official credible sets not found: {file}")
         return pd.DataFrame()
 
     df = pd.read_csv(file)
-    print(f"Loaded {len(df)} variants")
+    print(f"Loaded {len(df)} variants from Official PGC3 Credible Sets")
     return df
 
 def get_merged_peaks_and_footprint(cell_class, clusters):
@@ -187,6 +184,7 @@ def check_intersection(variants_df, peak_dict):
         chrom = str(row[chr_col])
         if not chrom.startswith('chr'): chrom = 'chr' + chrom
         pos = int(row[pos_col])
+        pos0 = pos - 1  # Convert 1-based SNP coordinate to 0-based BED system
         
         if chrom in peak_dict:
             # Linear scan of peaks in this chromosome
@@ -195,7 +193,7 @@ def check_intersection(variants_df, peak_dict):
             # Or just iterate.
             
             for (start, end) in peak_dict[chrom]:
-                if start <= pos <= end:
+                if start <= pos0 < end:
                     hits += 1
                     break # One hit is enough
                 if start > pos:

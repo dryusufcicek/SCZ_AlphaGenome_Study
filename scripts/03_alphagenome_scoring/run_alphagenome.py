@@ -1,10 +1,8 @@
 """
-Step 3 (REVISED): Score SCZ "Proxy Credible Set" variants using AlphaGenome API
+Step 3: Score SCZ Fine-Mapped Variants using AlphaGenome API
 
-Updates:
-- Consumes `scz_credible_sets_proxy.csv` (10k+ variants) instead of Lead SNPs
-- Preserves `Proxy_PP` and `Locus_ID` for downstream weighted aggregation
-- Handles larger batch size with progress saving
+Input: Official PGC3 FINEMAP 95% credible sets (20,591 variants)
+Output: Variant-level regulatory effect scores with posterior probabilities (PP)
 """
 import pandas as pd
 import numpy as np
@@ -20,6 +18,7 @@ from config import PROCESSED_DIR, ALPHAGENOME_API_KEY
 def score_variants_with_alphagenome(variants_df, api_key):
     """
     Score variants using AlphaGenome API.
+    Returns DataFrame with results.
     """
     from alphagenome.models.dna_client import create
     from alphagenome.data.genome import Interval, Variant
@@ -44,15 +43,13 @@ def score_variants_with_alphagenome(variants_df, api_key):
     results = []
     
     # Check for existing partial results to resume
-    output_file = PROCESSED_DIR / "alphgenome_variant_scores_proxy.csv"
+    output_file = PROCESSED_DIR / "alphagenome_variant_scores.csv"
     seen_snps = set()
     if output_file.exists():
         try:
             existing = pd.read_csv(output_file)
             seen_snps = set(existing['SNP'].astype(str))
             print(f"Resuming: Found {len(seen_snps)} already scored variants.")
-            # We will append new results
-            # Note: valid restart logic is complex, simpler to just skip in loop
         except:
             pass
 
@@ -91,52 +88,61 @@ def score_variants_with_alphagenome(variants_df, api_key):
                 variant_scorers=recommended
             )
             
-            # Extract Max Gene Effect
+            # Extract Max Gene Effect & Modalities
             target_gene = None
             target_gene_score = 0.0
             all_genes_str = ""
+            track_scores = {t: 0.0 for t in ["DNase", "H3K27ac", "H3K4me1", "H3K4me3", "CAGE", "CTCF", "RNA"]}
             
             if gene_scorer_idx is not None and len(scores) > gene_scorer_idx:
                 gene_adata = scores[gene_scorer_idx]
                 if gene_adata.X is not None and 'gene_name' in gene_adata.obs.columns:
                     gene_effects = []
+                    track_names = ["DNase", "H3K27ac", "H3K4me1", "H3K4me3", "CAGE", "CTCF", "RNA"]
                     for j, gname in enumerate(gene_adata.obs['gene_name']):
-                        vals = gene_adata.X[j]
-                        # robust max
+                        vals = gene_adata.X[j]  # These are the 7 tracks
+                        
+                        # Calculate robust max for the gene
                         valid_vals = vals[~np.isnan(vals)]
                         if len(valid_vals) > 0:
-                            effect = float(np.abs(valid_vals).max())
-                            # Threshold optimization to save space
-                            if effect > 0.1: 
-                                gene_effects.append(f"{gname}:{effect:.3f}")
-                                if effect > target_gene_score:
-                                    target_gene_score = effect
-                                    target_gene = gname
+                            gene_max_effect = float(np.abs(valid_vals).max())
+                            
+                            # Keep track for all genes string (max-based)
+                            if gene_max_effect > 0.1:
+                                gene_effects.append(f"{gname}:{gene_max_effect:.3f}")
+                            
+                            # Update target gene if this gene has the global max
+                            if gene_max_effect > target_gene_score:
+                                target_gene_score = gene_max_effect
+                                target_gene = gname
+                                # Save individual tracks for the champion gene
+                                for t_idx, t_name in enumerate(track_names):
+                                    if t_idx < len(vals):
+                                        track_scores[t_name] = float(vals[t_idx])
+                    
                     all_genes_str = ";".join(gene_effects)
 
             # Record Result
             res = {
                 'SNP': snp_id,
-                'CHR': row['CHR'],
-                'BP': pos,
-                'A1': ref, 
-                'A2': alt,
-                'Locus_ID': row.get('Locus_ID', -1),
-                'Proxy_PP': row.get('Proxy_PP', 0), # Critical for weighting
                 'target_gene': target_gene,
                 'target_gene_score': target_gene_score,
                 'all_genes': all_genes_str,
                 'success': True
             }
+            # Add track columns
+            for t_name, t_val in track_scores.items():
+                res[f'score_{t_name}'] = t_val
+            
             temp_results.append(res)
             
         except Exception as e:
             # Log failure but continue
+            print(f"Error scoring {snp_id}: {e}")
             temp_results.append({
-                'SNP': snp_id, 'CHR': row['CHR'], 'BP': pos,
-                'Locus_ID': row.get('Locus_ID', -1),
-                'Proxy_PP': row.get('Proxy_PP', 0),
-                'success': False, 'error': str(e)
+                'SNP': snp_id,
+                'success': False, 
+                'error': str(e)
             })
             
         # Incremental Save
@@ -158,27 +164,42 @@ def score_variants_with_alphagenome(variants_df, api_key):
 
 def main():
     print("="*60)
-    print("Step 3: AlphaGenome Scoring (Proxy Credible Sets)")
+    print("Step 3: AlphaGenome Scoring (Official PGC3 Credible Sets)")
     print("="*60)
     
-    # Load Input
-    input_file = PROCESSED_DIR / "scz_credible_sets_proxy.csv"
-    if not input_file.exists():
-        print(f"Input file not found: {input_file}")
-        print("Please run Step 1 (01_extract_gwas_variants.py) first.")
+    # 1. Load Official PGC3 Credible Sets (Target list)
+    official_file = PROCESSED_DIR / "credible_sets" / "scz_credible_sets_official.csv"
+    if not official_file.exists():
+        print(f"Input file not found: {official_file}")
         return
-
-    variants = pd.read_csv(input_file)
-    print(f"Loaded {len(variants)} variants from Proxy Credible Sets")
+    official_df = pd.read_csv(official_file)
+    print(f"Official Target: {len(official_df)} variants")
     
-    # API Check
+    # 2. Score ALL variants (High-Res 7-Modalities)
+    print("Starting FRESH run for ALL variants (7-Modalities)...")
+    
     api_key = ALPHAGENOME_API_KEY or os.environ.get('ALPHAGENOME_API_KEY')
     if not api_key:
         print("❌ API Key missing.")
         return
 
-    # Run
-    score_variants_with_alphagenome(variants, api_key)
+    # Run Scoring
+    scored_df = score_variants_with_alphagenome(official_df, api_key)
+    
+    # 3. Merge with Metadata (PP) and Save
+    print("\nMerging metadata and saving...")
+    
+    # Drop columns that will be added from official_df to avoid duplication
+    cols_to_drop = ['CHR', 'BP', 'A1', 'A2', 'Locus_ID', 'PP'] 
+    scored_df = scored_df.drop(columns=[c for c in cols_to_drop if c in scored_df.columns], errors='ignore')
+    
+    # Merge
+    final_df = official_df.merge(scored_df, on='SNP', how='inner')
+    
+    out_file = PROCESSED_DIR / "alphagenome_variant_scores.csv"
+    final_df.to_csv(out_file, index=False)
+    print(f"\n✅ Saved {len(final_df)} variants to {out_file}")
+    print("Full 7-modality dataset generated.")
 
 if __name__ == "__main__":
     main()

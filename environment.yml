@@ -1,4 +1,4 @@
-name: scz-alphagenome
+name: alphagenome_scz
 channels:
   - conda-forge
   - defaults
@@ -7,10 +7,13 @@ dependencies:
   - numpy
   - pandas
   - scipy
-  - scikit-learn
   - statsmodels
   - matplotlib
   - seaborn
-  - requests
   - tqdm
-  - jupyterlab
+  - python-dotenv
+  - requests
+  - openpyxl
+  - pip
+  - pip:
+    - alphagenome

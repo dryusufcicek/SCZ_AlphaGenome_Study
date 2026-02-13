@@ -1,100 +1,52 @@
 # Supplementary Information
 
-**Title:** Sequence-Based Deep Learning Identifies ATP2A2-Centered Calcium Dysregulation in Schizophrenia Polygenic Risk
-**Authors:** Yusuf Cicek, et al.
+**Title:** Sequence-Based Regulatory Scoring of Schizophrenia Credible-Set Variants with AlphaGenome  
+**Repository:** `AlphaGenome_SCZ`
 
----
+## Supplementary Note 1: Data Sources and Provenance
+This analysis uses local schizophrenia fine-mapping data derived from the PGC3 framework (`data/processed/credible_sets/scz_credible_sets_official.csv`). The file contains 20,591 variants in 249 loci and provides per-variant posterior probabilities used for downstream weighting. Sequence-based regulatory predictions were obtained from local AlphaGenome output tables and normalized into a canonical schema before re-analysis to prevent row-loss caused by mixed historical output formats.
 
-## Supplementary Note 1: GWAS Data and Locus Definition
-**Source:** We utilized the Psychiatric Genomics Consortium Wave 3 (PGC3) schizophrenia summary statistics (Trubetskoy et al., 2022), comprising 76,755 cases and 243,649 controls of predominantly European ancestry.
-**Locus Definition:** Genomic loci were defined by iteratively merging genome-wide significant variants ($P < 5 \times 10^{-8}$) located within 500kb of each other. This procedure yielded **237 independent genomic loci**.
-**Filtering:** Variants in the Major Histocompatibility Complex (MHC) region (chr6:25-34Mb) were excluded from primary scoring due to complex LD structure, though they were retained for specific sensitivity analyses.
-**Reference Panel:** Linkage Disequilibrium (LD) calculations for credible set construction utilized the 1000 Genomes Project Phase 3 reference panel (European super-population).
+Cell-type accessibility resources were consumed from local external files corresponding to adult brain cluster peaks (Corces dataset naming convention: `Cluster*.idr.optimal.narrowPeak.gz`) and fetal consensus peaks (`GSE162170_atac_consensus_peaks.bed.gz`). Hi-C validation used the local adult brain BEDPE file (`adultbrain_hic.bedpe`) resolved from the shared validation directory. SCHEMA convergence used the SCHEMA flag column from the local extended PGC3 table in `data/validation/scz2022-Extended-Data-Table1.xlsx`.
 
-## Supplementary Note 2: Credible Set Construction
-**Methodology:** To prioritize causal variants within each locus, we calculated Approximate Bayes Factors (ABF) assuming a single causal variant model per block as a simplifying heuristic for large-scale scoring.
-**Posterior Probabilities (PP):** For each variant $i$ in locus $L$, the posterior probability was calculated as:
-$$PP_i = \frac{ABF_i}{\sum_{j \in L} ABF_j}$$
-**Credible Sets:** We constructed 95% Credible Sets by ranking variants by $PP$ and retaining the cumulative sum up to 0.95.
-**Summary Statistics:**
-*   Total prioritized variants: **10,832**
-*   Mean variants per credible set: **45.7**
-*   Median variants per credible set: **22**
-This approach ensures that our analysis captures the full regulatory potential of the locus, rather than relying on a single, potentially non-causal lead SNP.
+GTEx brain eQTL validation was configured as best-effort download and parse. In the current execution, scripted URLs returned HTTP 404, so the pipeline wrote an explicit stub report (`results/tables/gtex_validation_stub.csv`) and did not report fabricated concordance statistics.
 
-## Supplementary Note 3: AlphaGenome Model Details
-**Model Architecture:** AlphaGenome is a sequence-based deep neural network trained to predict epigenetic profiles from DNA sequence. We utilized the standard pre-trained checkpoint available via the DeepMind API.
-**Input/Output:**
-*   **Input context:** 131,072 bp (128kb) centered on the variant.
-*   **Output modalities:** DNAse-seq, ATAC-seq, H3K27ac, H3K4me3, H3K4me1.
-*   **Biosamples:** Predictions were generated for **53** relevant biosamples, including adult brain regions (Cortex, Hippocampus, Substantia Nigra), fetal brain, and non-neural controls (Liver, Immune, Muscle).
-**Disclaimer:** AlphaGenome scores were used strictly as variant-level annotations to inform statistical fine-mapping, not as independent assertions of causality.
+## Supplementary Note 2: Schema Normalization and Variant Coverage Recovery
+Before correction, the active variant-score file lost 300 variants relative to the official credible-set input because mixed-width rows were dropped during a prior schema-repair pass. The revised schema normalization script (`scripts/fix_schema.py`) now parses legacy 5-column rows, 12-column rows, and malformed 13-column rows into a canonical 12-column table with standard modality headers. After this repair, `data/processed/alphagenome_variant_scores.csv` recovered full SNP coverage (20,591/20,591 variants).
 
-## Supplementary Note 4: Variant-to-Gene Scoring Formula
-**Aggregation Logic:** To calculate the regulatory burden for a specific gene $g$, we summed the contributions of all variants $v$ in its regulatory vicinity (promoter + enhancers), weighted by their causal probability ($PP_v$).
-**Formula:**
-$$GeneScore_g = \sum_{v \in CredibleSets} (PP_v \times |LFC_{v,g}|)$$
-Where:
-*   $PP_v$ is the Posterior Probability of variant $v$ being causal.
-*   $LFC_{v,g}$ is the AlphaGenome-predicted Log-Fold Change in chromatin accessibility/activity at gene $g$ caused by variant $v$.
-*   We utilized independent summation to capture additive regulatory effects across multiple LD blocks affecting the same gene.
+The repaired file preserves all variants for global weighted analyses. Modality values are still unavailable for a subset of variants due historical upstream outputs; this limitation is propagated transparently into downstream modality analyses.
 
-## Supplementary Note 5: Empirical Null & Z-Score Calibration
-**Rationale:** Raw deep learning scores are non-Gaussian and difficult to interpret (e.g., is a score of 5.0 high?). We calibrated these against a genome-wide background.
-**Background Universe:** We defined a "Null Universe" of **47,808 genes**, representing the comprehensive set of protein-coding and lncRNA genes in the genome.
-**Z-Score Formulation:**
-$$Z_g = \frac{Score_g - \mu_{null}}{\sigma_{null}}$$
-Where $\mu_{null}$ and $\sigma_{null}$ are the mean and standard deviation of scores across the entire 47k gene universe.
-**Result:** A Z-score of 4.0 implies the gene carries a regulatory burden 4 standard deviations above the genome-wide expectation. This empirically calibrated metric allows for fair comparison between genes. Note that these Z-scores reflect deviations from an empirical genome-wide null distribution and are not directly comparable to standard normal Z statistics.
+## Supplementary Note 3: Gene Aggregation and Empirical Calibration
+Gene-level burden is defined as posterior-weighted accumulation of variant effects at assigned target genes. Aggregation is implemented in `scripts/04_variant_to_gene/compute_gene_scores.py` and outputs `data/processed/gene_scores/gene_weighted_scores.csv`. In this run, 483 genes had non-zero weighted burden.
 
-## Supplementary Note 6: Sensitivity Analyses
-**Robustness Check:** To ensure results were not driven by extreme outliers (Table 1), we performed a "Leave-One-Percent-Out" sensitivity analysis.
-**Procedure:**
-1.  Identified the top 1% of genes by Z-score ($N \approx 470$).
-2.  Removed these genes from the ranked list.
-3.  Re-ran GSEA on the remaining 99%.
-**Results:** As detailed in the main text, while the hyper-significant P-values for "Transcription" attenuated, the core modules of **Synapse Organization** and **Heterochromatin Organization** remained statistically significant ($P < 0.05$), confirming the polygenic nature of the signal.
+Empirical calibration against the full local gene universe is implemented in `scripts/05_null_model/compute_empirical_zscores.py`. The calibrated matrix (`data/processed/gene_scores/gene_z_scores.csv`) includes 19,452 genes, preserving both global `z_score` and modality-specific z-columns. The weighted-score distribution figure is available at `results/figures/score_distribution_z.png`.
 
-## Supplementary Note 7: Unbiased GSEA Methodology
-**Pathway Database:** Gene Ontology (GO) Biological Process 2023 (~5,000 terms).
-**Statistical Test:** Mann-Whitney U test (one-sided, testing for higher rank).
-**Ranking Metric:** Empirical Z-Score. Non-overlapping genes were assigned the minimum rank (0).
-**Multiple Testing:** Benjamini-Hochberg False Discovery Rate (FDR) correction was applied across all 5,000 tested pathways.
-**Transparency:** The full ranked list of all tested pathways is provided in **Supplementary Table S3**.
+## Supplementary Note 4: Pathway Enrichment Implementation
+Pathway testing is implemented in `scripts/06_enrichment/run_gsea.py` using one-sided Mann-Whitney U tests against non-pathway genes with Benjamini-Hochberg correction. The global weighted-score results are stored in `results/tables/gsea_enrichment_score.csv`; modality-stratified results are stored in separate files (`gsea_enrichment_DNase.csv`, `gsea_enrichment_H3K27ac.csv`, and others), and a combined top-50 summary per modality is stored in `results/tables/gsea_enrichment_ALL_MODALITIES_summary.csv`.
 
-## Supplementary Note 8: Cell-Type Enrichment & Footprint Normalization
-**Data Source:** Cell-type specific ATAC-seq peaks from the human brain (Corces et al., 2020 / Trevino et al., 2021).
-**The "Volume" Problem:** iPSCs and progenitors have significantly larger Total Accessible Chromatin volumes than mature neurons, leading to identifying more variant overlaps by chance.
-**Exact Normalization:** We calculated the total genomic footprint (bp coverage) for each broad cell class by merging peak intervals (`bedtools merge` / python equivalent). Enrichment was defined as the ratio of `Observed / Expected` hits, where Expected was calculated based on the precise genomic footprint of each cell type.
+## Supplementary Note 5: Cell-Type Footprint Normalization
+Cell-type overlap is implemented in `scripts/07_celltype_analysis/footprint_normalization.py` by merging peak intervals per class, estimating genomic footprint fractions, and testing observed variant overlaps against binomial expectation. Coordinate matching now explicitly converts 1-based SNP positions to the 0-based BED convention during overlap checks.
 
-**Results (Real Data Validation):**
-*   **Excitatory Neurons:** 127.4 MB Genome Coverage → **1.11-fold Enrichment** (P = 0.007).
-*   **Inhibitory Neurons:** 78.7 MB Genome Coverage → **1.06-fold Enrichment** (P = 0.14, n.s.).
-*   **Microglia & OPCs:** Strong enrichment observed (1.32x and 1.39x, P < 1e-7), suggesting a significant glial component to the regulatory risk, consistent with recent multi-ancestry findings.
-*   **Fetal Progenitors:** 329.6 MB Coverage → **1.10-fold Enrichment** (P < 0.001).
+The resulting table (`data/processed/celltype_enrichment/cell_type_footprint_enrichment.csv`) reports seven classes. In this run, fetal progenitors reached nominal significance (P = 0.010, enrichment = 1.04), whereas mature excitatory and inhibitory classes were not significant.
 
-This rigorous normalization confirms that while Excitatory Neurons are significantly enriched, the regulatory risk is broadly distributed across multiple brain cell types, including strong glial involvement.
+## Supplementary Note 6: Orthogonal Validation Layers
+Hi-C overlap (`scripts/09_validation/hic_chromatin_loops.py`) uses merged loop anchors to avoid overestimation from overlapping anchors. The hit table (`results/tables/hic_loop_overlap.csv`) contains 9,321 variants.
 
-## Supplementary Note 9: Directionality
-**Observation:** Our analysis quantified the *magnitude* of regulatory disruption (|LFC|).
-**Global Trend:** Preliminary analysis of signed LFCs suggests a mixed landscape, with no single global skew towards upregulation or downregulation across all risk loci. This is consistent with complex traits where risk can be conferred by both gain-of-function and loss-of-function mechanisms, or by stabilizing/destabilizing chromatin state in context-dependent ways. Thus, we focus on "Dysregulation" magnitude rather than simple directionality.
+SCHEMA convergence (`scripts/09c_convergence_schema.py`) calculates hypergeometric overlap between top weighted genes and SCHEMA-flagged genes resolved from local extended data. The overlap table (`results/tables/schema_convergence_overlap.csv`) contains GRIN2A and SP4 in this run, with P = 0.00364.
 
-## Supplementary Note 10: Benchmarking
-**Comparison:** We compared AlphaGenome-prioritized genes ($Z > 2$) with:
-1.  **Nearest Gene:** Simple proximity mapping.
-2.  **PGC3 Prioritized:** Official study list (Trubetskoy et al.).
-**Overlap:** We observed a significant overlap (OR = 5.03, $P < 10^{-10}$) with the PGC3 prioritized list, confirming that our model recovers known biology while expanding the candidate set to include mechanistically linked partners (e.g., *H2AC20*) that were missed by statistical fine-mapping alone.
+GTEx validation (`scripts/09_validation/gtex_eqtl_validation.py`) currently returns a transparent stub status because downloadable brain files were not resolved from scripted URLs.
 
-## Supplementary Note 11: Limitations & Model Assumptions
-**Adult Tissue Bias:** The AlphaGenome model was primarily trained on adult tissue data (ENCODE/GTEx). While we include fetal brain biosamples, the model may under-detect strictly developmental regulatory events.
-**Probabilistic Nature:** All predictions are computational inferences. While statistically calibrated, they have not been validated by direct CRISPR perturbation in this specific study.
-**Missing Heritability:** Our credible sets explain the *common variant* signal; rare variants provided by sequencing studies (SCHEMA) offer complementary but distinct insights.
+## Supplementary Tables Produced in This Run
+`results/tables/Supplementary_Table_1_Variant_Scores.csv` contains the merged credible-set and AlphaGenome variant-level matrix (20,591 rows). `results/tables/Supplementary_Table_2_Gene_Scores.csv` contains calibrated genome-wide gene scores (19,452 rows). `results/tables/Supplementary_Table_3_Pathway_GSEA.csv` contains full global pathway enrichment output (2,717 rows). `results/tables/Supplementary_Table_4_CellType_Enrichment.csv` contains footprint-normalized cell-type enrichment values (7 rows). `results/tables/Supplementary_Table_5_MultiModal_GSEA_Top50.csv` contains the top-50 pathways for each of eight score spaces (400 rows). `results/tables/Supplementary_Table_6_SCHEMA_Overlap.csv` contains convergent genes from SCHEMA overlap (2 rows). `results/tables/Supplementary_Table_7_HiC_Loop_Overlap.csv` contains variant-level Hi-C anchor overlaps (9,321 rows).
 
----
+## References
+Trubetskoy V, Pardiñas AF, Qi T, et al. Mapping genomic loci implicates genes and synaptic biology in schizophrenia. *Nature*. 2022;604:502-508. doi:10.1038/s41586-022-04434-5.
 
-## Supplementary Data Tables
-**Table S1:** **All Scored Variants.** CSV containing RSID, Chromosome, Position, PGC3 P-value, Proxy Posterior Probability, and Raw AlphaGenome Scores.
-**Table S2:** **Gene-Level Results.** CSV containing Gene Symbol, Aggregated Weighted Score, Empirical Z-Score, and Rank.
-**Table S3:** **Full GSEA Results.** CSV containing 5,000 GO Biological Processes, N_Overlap, P-value, FDR, and Effect Size.
-**Table S4:** **Cell-Type Specificity.** CSV containing raw counts and normalized binomial statistics for all tested cell types.
-**Table S5:** **Sensitivity Analysis.** Comparison of top pathways before and after removing top 1% outlier genes.
+Singh T, Poterba T, Curtis D, et al. Rare coding variants in ten genes confer substantial risk for schizophrenia. *Nature*. 2022;604:509-516. doi:10.1038/s41586-022-04556-w.
+
+Avsec Z, Latysheva N, Cheng J, et al. Advancing regulatory variant effect prediction with AlphaGenome. *Nature*. 2026;649. doi:10.1038/s41586-025-10014-0.
+
+Corces MR, Shcherbina A, Kundu S, et al. Single-cell epigenomic analyses implicate candidate causal variants at inherited risk loci for Alzheimer's and Parkinson's diseases. *Nat Genet*. 2020;52(11):1158-1168. doi:10.1038/s41588-020-00721-x.
+
+Trevino AE, Müller F, Andersen J, et al. Chromatin and gene-regulatory dynamics of the developing human cerebral cortex at single-cell resolution. *Cell*. 2021;184(19):5053-5069.e23. doi:10.1016/j.cell.2021.07.039.
+
+GTEx Consortium. The GTEx Consortium atlas of genetic regulatory effects across human tissues. *Science*. 2020;369(6509):1318-1330. doi:10.1126/science.aaz1776.
