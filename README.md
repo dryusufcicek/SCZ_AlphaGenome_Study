@@ -7,7 +7,7 @@
 
 ---
 
-## 📋 Overview
+## Overview
 
 This repository contains analysis code and results for functional genomic prioritization of schizophrenia risk genes using:
 - **Fine-mapped GWAS variants** (PGC3, 20,760 variants, 255 loci)
@@ -39,7 +39,7 @@ SCZ_AlphaGenome_Study/
 
 ---
 
-## 🔬 Methods Summary
+## Methods Summary
 
 ### 1. Fine-Mapped Variants
 - **Source**: PGC3 schizophrenia GWAS (Trubetskoy et al., Nature 2022)
@@ -96,7 +96,7 @@ SCZ_AlphaGenome_Study/
 
 ---
 
-## 🛠️ Analysis Pipeline
+## Analysis Pipeline
 
 ### Prerequisites
 - Python 3.11+
@@ -138,24 +138,24 @@ See `scripts/README.md` for detailed usage.
 
 ---
 
-## 📄 Data Sources
+## Data Sources
 
 All data sources are publicly available:
 
 | Data Type | Source | Citation |
 |-----------|--------|----------|
 | **Schizophrenia GWAS** | PGC3 fine-mapping | Trubetskoy et al., Nature 2022 |
-| **Regulatory predictions** | AlphaGenome API | - |
-| **Hi-C chromatin loops** | PsychENCODE | Won et al., Science 2016 |
-| **Brain eQTL** | GTEx v10 | Aguet et al., Nat Genet 2020 |
-| **Gene annotations** | GENCODE v38 | Frankish et al., Nucleic Acids Res 2019 |
+| **Regulatory predictions** | AlphaGenome API | Avsec et al., Nature 2026 |
+| **Hi-C chromatin loops** | PsychENCODE | PsychENCODE Resources |
+| **Brain eQTL** | GTEx v10 | GTEx Portal |
+| **Gene annotations** | GENCODE v38 | - |
 | **GO pathways** | Gene Ontology | GO Consortium 2023 |
 
 **Data access instructions**: See `data/README.md`
 
 ---
 
-## 📈 Key Statistics
+## Key Statistics
 
 ### Gene Discovery
 - **Total genes tested**: 1,617
@@ -178,7 +178,7 @@ All data sources are publicly available:
 
 ---
 
-## 📝 Publication Materials
+## Publication Materials
 
 **Location**: `manuscript/`
 
@@ -192,7 +192,7 @@ Available files (NO manuscript document included):
 
 ---
 
-## 🔗 Citation
+## Citation
 
 If you use this code or data, please cite:
 
@@ -202,21 +202,21 @@ If you use this code or data, please cite:
 
 ---
 
-## 📧 Contact
+## Contact
 
-**Principal Investigator**: Yusuf Cicek
+**Investigator**: Yusuf Cicek, MD
 **Email**: yusuf.cicek@iuc.edu.tr
 **Institution**: Istanbul University-Cerrahpasa
 
 ---
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see LICENSE file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Psychiatric Genomics Consortium (PGC3 GWAS data)
 - GTEx Consortium (brain eQTL data)
