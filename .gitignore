@@ -1,0 +1,80 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Manuscript drafts (DO NOT UPLOAD)
+*.docx
+*.doc
+*_DRAFT*
+*_REVISION*
+*_REFRAMED*
+*_BIOLOGY_FOCUSED*
+*INTEGRATION*
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+~$*
+
+# Data (large files - reference only)
+data/*.csv.gz
+data/*.tsv.gz
+data/*.bed.gz
+data/*.vcf.gz
+
+# Results (keep only final)
+results/*_temp*
+results/*_test*
+results/*_old*
+
+# Scripts (keep only clean versions)
+scripts_old/
+scripts_temp/
+scripts_test/
+
+# Personal notes
+NOTES*.md
+TODO*.md
+CRITICAL_REVIEW*
+MANUSCRIPT_COMPLETION_STATUS*
+GITHUB_UPLOAD_PLAN*
