@@ -198,11 +198,11 @@ All analyses were performed in Python 3.11 using pandas 2.0.3, numpy 1.24.3, sci
 
 **PGC3 Schizophrenia GWAS**: Trubetskoy et al. (*Nature* 2022), Supplementary Table 11d (fine-mapped credible sets)
 
-**AlphaGenome**: Pre-trained Enformer model via API (https://alphagenome.ai)
+**AlphaGenome**: Pre-trained Enformer model via API 
 
-**PsychENCODE Hi-C**: Won et al. (*Science* 2016), fetal brain chromatin loops (FDR<0.05)
+**PsychENCODE Hi-C**
 
-**GTEx v10 eQTL**: Aguet et al. (*Nature Genetics* 2020), brain tissue eGenes (q<0.05)
+**GTEx v10 eQTL**
 
 **Gene Ontology Biological Process**: Gene Ontology Consortium 2023 release
 
